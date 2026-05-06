@@ -1,0 +1,8 @@
+{
+  "name": "Campus Hub",
+  "description": "Unified landing, organizer and admin portal for campus events.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}

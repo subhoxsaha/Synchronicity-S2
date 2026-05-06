@@ -1,0 +1,255 @@
+
+<style>
+  h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .phase-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem;cursor:pointer;transition:border-color .2s}
+  .phase-card:hover{border-color:var(--color-border-secondary)}
+  .phase-header{display:flex;align-items:center;gap:12px;margin-bottom:0}
+  .phase-header.open{margin-bottom:1rem}
+  .phase-tag{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap}
+  .phase-title{font-size:15px;font-weight:500;flex:1;color:var(--color-text-primary)}
+  .phase-dur{font-size:12px;color:var(--color-text-secondary);white-space:nowrap}
+  .chevron{font-size:16px;color:var(--color-text-tertiary);transition:transform .25s}
+  .chevron.open{transform:rotate(180deg)}
+  .phase-body{display:none}
+  .phase-body.open{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .feature-pill{display:flex;align-items:flex-start;gap:8px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.6rem .75rem}
+  .pill-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+  .pill-label{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+  .pill-desc{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+  .stack-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:.75rem}
+  .stack-badge{font-size:11px;padding:3px 9px;border-radius:12px;font-weight:500}
+  .progress-bar{height:4px;border-radius:2px;background:var(--color-background-secondary);margin-bottom:1.25rem;overflow:hidden}
+  .progress-fill{height:100%;border-radius:2px}
+  .ui-preview{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;margin-top:.75rem}
+  .ui-bar{height:32px;display:flex;align-items:center;padding:0 12px;gap:8px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+  .ui-dot{width:7px;height:7px;border-radius:50%}
+  .ui-content{padding:10px 12px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .ui-card-mock{background:var(--color-background-secondary);border-radius:6px;padding:8px;font-size:11px;color:var(--color-text-secondary)}
+  .ui-card-top{height:36px;border-radius:4px;margin-bottom:6px}
+  .section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin:0 0 8px}
+  .timeline-row{display:flex;gap:0;margin-bottom:1rem}
+  .tl-block{flex:1;text-align:center;padding:8px 4px;font-size:11px;font-weight:500;border-radius:4px;margin:0 2px}
+  .insight-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1rem}
+  .insight-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem}
+</style>
+
+<h2 class="sr-only">Intelligent Campus Event Recommendation Engine — Implementation Plan</h2>
+
+<div style="padding:0.5rem 0 1rem">
+
+  <!-- Summary row -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem">
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem;text-align:center">
+      <div style="font-size:22px;font-weight:500;color:var(--color-text-primary)">5</div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">Phases</div>
+    </div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem;text-align:center">
+      <div style="font-size:22px;font-weight:500;color:var(--color-text-primary)">20</div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">Weeks total</div>
+    </div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem;text-align:center">
+      <div style="font-size:22px;font-weight:500;color:var(--color-text-primary)">3</div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">User roles</div>
+    </div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem;text-align:center">
+      <div style="font-size:22px;font-weight:500;color:var(--color-text-primary)">ML</div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">Powered core</div>
+    </div>
+  </div>
+
+  <!-- Timeline bar -->
+  <p class="section-label">Delivery timeline</p>
+  <div class="timeline-row">
+    <div class="tl-block" style="background:#EEEDFE;color:#3C3489;flex:1">Wk 1–3<br>Foundation</div>
+    <div class="tl-block" style="background:#E1F5EE;color:#085041;flex:1.2">Wk 4–8<br>Core Build</div>
+    <div class="tl-block" style="background:#FAEEDA;color:#633806;flex:1">Wk 9–12<br>ML Layer</div>
+    <div class="tl-block" style="background:#FAECE7;color:#4A1B0C;flex:0.8">Wk 13–16<br>Refinement</div>
+    <div class="tl-block" style="background:#E6F1FB;color:#0C447C;flex:0.8">Wk 17–20<br>Launch</div>
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="phase-card" onclick="toggle('p1')">
+    <div class="phase-header" id="p1-hdr">
+      <span class="phase-tag" style="background:#EEEDFE;color:#3C3489">Phase 1</span>
+      <span class="phase-title">Foundation & design system</span>
+      <span class="phase-dur">Weeks 1–3</span>
+      <i class="ti ti-chevron-down chevron" id="p1-chev" aria-hidden="true"></i>
+    </div>
+    <div class="phase-body" id="p1-body">
+      <div>
+        <div class="feature-pill"><span class="pill-icon" style="color:#7F77DD">🗂</span><div><div class="pill-label">Requirements workshop</div><div class="pill-desc">Map all user journeys: student, organizer, admin</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#7F77DD">🎨</span><div><div class="pill-label">UI design system</div><div class="pill-desc">Tokens, components, dark mode, accessibility</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#7F77DD">🗃</span><div><div class="pill-label">Database schema v1</div><div class="pill-desc">ERD for users, events, registrations, interactions</div></div></div>
+      </div>
+      <div>
+        <p class="section-label">Tech decisions</p>
+        <div class="feature-pill"><span class="pill-icon">⚙️</span><div><div class="pill-label">Monorepo setup</div><div class="pill-desc">React + Node.js + Python ML service + PostgreSQL</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon">🔐</span><div><div class="pill-label">Auth strategy</div><div class="pill-desc">SSO via university LDAP or OAuth2 (Google Workspace)</div></div></div>
+        <div class="stack-row">
+          <span class="stack-badge" style="background:#EEEDFE;color:#3C3489">React 18</span>
+          <span class="stack-badge" style="background:#EEEDFE;color:#3C3489">Tailwind v4</span>
+          <span class="stack-badge" style="background:#EEEDFE;color:#3C3489">Node.js</span>
+          <span class="stack-badge" style="background:#EEEDFE;color:#3C3489">PostgreSQL</span>
+          <span class="stack-badge" style="background:#EEEDFE;color:#3C3489">Redis</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="phase-card" onclick="toggle('p2')">
+    <div class="phase-header" id="p2-hdr">
+      <span class="phase-tag" style="background:#E1F5EE;color:#085041">Phase 2</span>
+      <span class="phase-title">Core portals & data layer</span>
+      <span class="phase-dur">Weeks 4–8</span>
+      <i class="ti ti-chevron-down chevron" id="p2-chev" aria-hidden="true"></i>
+    </div>
+    <div class="phase-body" id="p2-body">
+      <div>
+        <p class="section-label">Student portal</p>
+        <div class="feature-pill"><span class="pill-icon" style="color:#1D9E75">🏠</span><div><div class="pill-label">Discovery feed</div><div class="pill-desc">Swipeable event cards with category filters & tags</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#1D9E75">🔔</span><div><div class="pill-label">Notification centre</div><div class="pill-desc">In-app + email + push via Socket.IO & Firebase</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#1D9E75">🎫</span><div><div class="pill-label">QR registration flow</div><div class="pill-desc">Register → get QR code → auto-add to calendar</div></div></div>
+      </div>
+      <div>
+        <p class="section-label">Organizer portal</p>
+        <div class="feature-pill"><span class="pill-icon" style="color:#1D9E75">📅</span><div><div class="pill-label">Event builder</div><div class="pill-desc">Rich form: cover image, tags, capacity, co-hosts</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#1D9E75">📷</span><div><div class="pill-label">QR scanner PWA</div><div class="pill-desc">Works offline, syncs attendance on reconnect</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#1D9E75">⚡</span><div><div class="pill-label">Live dashboard</div><div class="pill-desc">Real-time headcount, capacity alerts, waitlist</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="phase-card" onclick="toggle('p3')">
+    <div class="phase-header" id="p3-hdr">
+      <span class="phase-tag" style="background:#FAEEDA;color:#633806">Phase 3</span>
+      <span class="phase-title">Recommendation engine & ML pipeline</span>
+      <span class="phase-dur">Weeks 9–12</span>
+      <i class="ti ti-chevron-down chevron" id="p3-chev" aria-hidden="true"></i>
+    </div>
+    <div class="phase-body" id="p3-body">
+      <div>
+        <p class="section-label">Better ML approach</p>
+        <div class="feature-pill"><span class="pill-icon" style="color:#BA7517">🧠</span><div><div class="pill-label">Two-stage ranking</div><div class="pill-desc">Stage 1: candidate recall via KNN. Stage 2: XGBoost re-ranker on rich features.</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#BA7517">🏷</span><div><div class="pill-label">Semantic event tagging</div><div class="pill-desc">Embed event descriptions with sentence-transformers for cold-start matching</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#BA7517">📈</span><div><div class="pill-label">Implicit signals</div><div class="pill-desc">Track dwell time, scroll depth, share — not just clicks</div></div></div>
+      </div>
+      <div>
+        <p class="section-label">Feature signals used</p>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <div style="width:80px;height:6px;border-radius:3px;background:#E8593C;opacity:.85"></div>
+            <span style="color:var(--color-text-secondary)">Past event attendance</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <div style="width:64px;height:6px;border-radius:3px;background:#E8593C;opacity:.7"></div>
+            <span style="color:var(--color-text-secondary)">Department & year match</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <div style="width:52px;height:6px;border-radius:3px;background:#E8593C;opacity:.55"></div>
+            <span style="color:var(--color-text-secondary)">Peer similarity (KNN)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <div style="width:40px;height:6px;border-radius:3px;background:#E8593C;opacity:.4"></div>
+            <span style="color:var(--color-text-secondary)">Declared interest tags</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <div style="width:28px;height:6px;border-radius:3px;background:#E8593C;opacity:.3"></div>
+            <span style="color:var(--color-text-secondary)">Time-of-day preference</span>
+          </div>
+        </div>
+        <div class="feature-pill" style="margin-top:10px"><span class="pill-icon" style="color:#BA7517">🔁</span><div><div class="pill-label">Feedback loop</div><div class="pill-desc">Post-event ratings retrain model weekly via Celery task</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 4 -->
+  <div class="phase-card" onclick="toggle('p4')">
+    <div class="phase-header" id="p4-hdr">
+      <span class="phase-tag" style="background:#FAECE7;color:#4A1B0C">Phase 4</span>
+      <span class="phase-title">Smart features & AI assistant</span>
+      <span class="phase-dur">Weeks 13–16</span>
+      <i class="ti ti-chevron-down chevron" id="p4-chev" aria-hidden="true"></i>
+    </div>
+    <div class="phase-body" id="p4-body">
+      <div>
+        <div class="feature-pill"><span class="pill-icon" style="color:#993C1D">🤖</span><div><div class="pill-label">AI chatbot (RAG-based)</div><div class="pill-desc">Use Claude API + event knowledge base, not a custom model. Handles FAQs, eligibility, venue questions.</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#993C1D">📄</span><div><div class="pill-label">Auto certificate PDF</div><div class="pill-desc">Triggered on QR scan completion, e-signed via campus seal</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#993C1D">⚠️</span><div><div class="pill-label">Conflict resolver</div><div class="pill-desc">Detect venue/time clashes. Suggest optimal rescheduling using historical peak-hours data.</div></div></div>
+      </div>
+      <div>
+        <div class="feature-pill"><span class="pill-icon" style="color:#993C1D">📊</span><div><div class="pill-label">Admin analytics suite</div><div class="pill-desc">Funnel view, demographic heatmaps, CSV export, semester comparison</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#993C1D">🗓</span><div><div class="pill-label">Calendar sync</div><div class="pill-desc">Export registered events to Google Calendar / iCal with reminders</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#993C1D">🏆</span><div><div class="pill-label">Gamification layer</div><div class="pill-desc">Attendance streaks, department leaderboards, badge system to drive repeat engagement</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 5 -->
+  <div class="phase-card" onclick="toggle('p5')">
+    <div class="phase-header" id="p5-hdr">
+      <span class="phase-tag" style="background:#E6F1FB;color:#0C447C">Phase 5</span>
+      <span class="phase-title">Testing, hardening & launch</span>
+      <span class="phase-dur">Weeks 17–20</span>
+      <i class="ti ti-chevron-down chevron" id="p5-chev" aria-hidden="true"></i>
+    </div>
+    <div class="phase-body" id="p5-body">
+      <div>
+        <div class="feature-pill"><span class="pill-icon" style="color:#185FA5">🧪</span><div><div class="pill-label">A/B test recommendations</div><div class="pill-desc">Measure CTR & attendance lift from ML vs. rule-based baseline</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#185FA5">♿</span><div><div class="pill-label">WCAG 2.1 audit</div><div class="pill-desc">Screen reader, keyboard nav, color contrast — all portals</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#185FA5">🔒</span><div><div class="pill-label">Security hardening</div><div class="pill-desc">Pen test, rate limiting, GDPR consent flows, data anonymization</div></div></div>
+      </div>
+      <div>
+        <div class="feature-pill"><span class="pill-icon" style="color:#185FA5">🚀</span><div><div class="pill-label">Staged rollout</div><div class="pill-desc">Beta with 2–3 clubs → all organizers → full student body</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#185FA5">📈</span><div><div class="pill-label">KPI dashboard</div><div class="pill-desc">Track: attendance rate, recommendation CTR, NPS score, avg. events/student</div></div></div>
+        <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#185FA5">📘</span><div><div class="pill-label">Documentation</div><div class="pill-desc">API docs (Swagger), organizer guide, admin runbook</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UI ideas section -->
+  <p class="section-label" style="margin-top:1.5rem">Better UI ideas</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">🗺 Map view for events</div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">Let students see events plotted on a campus map. Filter by walking distance from current location.</div>
+    </div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">📱 "For You" story reel</div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">Vertical swipe format (like Instagram Stories) for AI-recommended events — higher engagement than a list.</div>
+    </div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">👥 "Friends going" badge</div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">Show avatar stack of peers who registered. Social proof is the single strongest driver of student attendance.</div>
+    </div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">⏳ Urgency indicators</div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">"Only 8 spots left" live counter with a subtle progress bar on each event card. Real-time via Socket.IO.</div>
+    </div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">📆 Week at a glance</div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">Horizontal timeline widget on the home screen showing registered + suggested events across the next 7 days.</div>
+    </div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">🎨 Organizer brand kit</div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">Clubs upload a logo + color palette. Event cards auto-inherit club branding — makes feed feel richer, not generic.</div>
+    </div>
+  </div>
+
+  <button onclick="sendPrompt('Can you generate a detailed wireframe description for the student discovery feed with the story reel and map view?')" style="margin-top:1.25rem;width:100%;padding:.65rem;font-size:13px;border-radius:var(--border-radius-md);cursor:pointer;background:transparent;border:0.5px solid var(--color-border-secondary);color:var(--color-text-primary)">
+    Generate wireframe description for the student discovery feed ↗
+  </button>
+</div>
+
+<script>
+function toggle(id){
+  const body=document.getElementById(id+'-body');
+  const chev=document.getElementById(id+'-chev');
+  const hdr=document.getElementById(id+'-hdr');
+  const open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  chev.classList.toggle('open',!open);
+  hdr.classList.toggle('open',!open);
+}
+</script>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intelligent Campus Event Engine - Master Plan</title>
+<style>
+  :root {
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f9fafb;
+    --color-background-tertiary: #f3f4f6;
+    --color-background-info: #eff6ff;
+    --color-border-primary: #d1d5db;
+    --color-border-secondary: #9ca3af;
+    --color-border-tertiary: #e5e7eb;
+    --color-border-info: #bfdbfe;
+    --color-text-primary: #111827;
+    --color-text-secondary: #4b5563;
+    --color-text-tertiary: #9ca3af;
+    --color-text-info: #1d4ed8;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    color: var(--color-text-primary);
+    background-color: var(--color-background-primary);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    line-height: 1.5;
+  }
+
+  h1.main-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+    color: var(--color-text-primary);
+  }
+
+  p.subtitle {
+    text-align: center;
+    color: var(--color-text-secondary);
+    margin-bottom: 40px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 16px;
+    border-bottom: 1px solid var(--color-border-tertiary);
+    margin-bottom: 24px;
+  }
+
+  .tab {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab:hover {
+    color: var(--color-text-primary);
+  }
+
+  .tab.active {
+    color: var(--color-text-primary);
+    border-bottom-color: #3C3489;
+  }
+
+  .tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Plan Styles */
+  h2.sr-only, .sr-only {position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .phase-card{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem;cursor:pointer;transition:border-color .2s;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);}
+  .phase-card:hover{border-color:var(--color-border-secondary)}
+  .phase-header{display:flex;align-items:center;gap:12px;margin-bottom:0}
+  .phase-header.open{margin-bottom:1rem}
+  .phase-tag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;letter-spacing:0.02em}
+  .phase-title{font-size:16px;font-weight:600;flex:1;color:var(--color-text-primary)}
+  .phase-dur{font-size:13px;color:var(--color-text-secondary);white-space:nowrap}
+  .chevron{font-size:16px;color:var(--color-text-tertiary);transition:transform .25s}
+  .chevron.open{transform:rotate(180deg)}
+  .phase-body{display:none}
+  .phase-body.open{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .feature-pill{display:flex;align-items:flex-start;gap:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem; border: 1px solid var(--color-border-tertiary);}
+  .pill-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+  .pill-label{font-size:14px;font-weight:600;color:var(--color-text-primary)}
+  .pill-desc{font-size:13px;color:var(--color-text-secondary);margin-top:4px;line-height:1.4}
+  .stack-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:.75rem}
+  .stack-badge{font-size:11px;padding:4px 10px;border-radius:12px;font-weight:600}
+  .section-label{font-size:12px;font-weight:600;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin:0 0 10px}
+  .timeline-row{display:flex;gap:4px;margin-bottom:2rem}
+  .tl-block{flex:1;text-align:center;padding:10px 4px;font-size:12px;font-weight:600;border-radius:6px;}
+  
+  /* Stack Styles */
+  .os-card{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:12px;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);}
+  .os-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .layer-badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;letter-spacing:0.02em}
+  .os-layer-title{font-size:16px;font-weight:600;color:var(--color-text-primary);flex:1}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .tool{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;cursor:pointer;border:1px solid var(--color-border-tertiary);transition:all .15s}
+  .tool:hover{border-color:var(--color-border-secondary); transform: translateY(-1px);}
+  .tool.active{border-color:var(--color-border-info);background:var(--color-background-info);box-shadow: 0 0 0 1px var(--color-border-info);}
+  .tool-name{font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:4px}
+  .tool.active .tool-name{color:var(--color-text-info)}
+  .tool-role{font-size:12px;color:var(--color-text-secondary)}
+  .tool-stars{font-size:11px;color:var(--color-text-tertiary);margin-top:6px}
+  .tool-info{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px;margin-top:12px;display:none;border:1px solid var(--color-border-tertiary);}
+  .tool-info.open{display:block; animation: fadeIn 0.2s ease;}
+  .info-title{font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:6px}
+  .info-body{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+  .tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:12px;margin-right:6px;margin-bottom:4px;letter-spacing:0.02em}
+  .tag-mit{background:#EAF3DE;color:#27500A}
+  .tag-apache{background:#E6F1FB;color:#0C447C}
+  .tag-agpl{background:#FAEEDA;color:#633806}
+  .tag-bsd{background:#EEEDFE;color:#3C3489}
+  .tag-self{background:#E1F5EE;color:#085041}
+  .tag-cloud{background:#FCEBEB;color:#791F1F}
+  .code{font-family:var(--font-mono);font-size:12px;background:#1f2937;border-radius:6px;padding:10px 12px;margin-top:10px;line-height:1.5;color:#e5e7eb;white-space:pre-wrap;overflow-x:auto;}
+  .divider{height:1px;background:var(--color-border-tertiary);margin:24px 0}
+  .highlight-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:16px}
+  .hl{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px;border:1px solid var(--color-border-tertiary);}
+  .hl-title{font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:6px;display:flex;align-items:center;}
+  .hl-body{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+  
+  .stat-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:24px;}
+  .stat-box {background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:1rem;text-align:center;}
+  .stat-val {font-size:28px;font-weight:600;color:var(--color-text-primary);margin-bottom:4px;}
+  .stat-label {font-size:12px;color:var(--color-text-secondary);font-weight:500;text-transform:uppercase;letter-spacing:0.05em;}
+
+  .action-button {
+    margin-top:1.5rem;width:100%;padding:14px;font-size:14px;font-weight:600;border-radius:var(--border-radius-md);cursor:pointer;background:var(--color-background-primary);border:1px solid var(--color-border-secondary);color:var(--color-text-primary);transition:all 0.2s;
+  }
+  .action-button:hover {
+    background:var(--color-background-secondary);
+    border-color:var(--color-text-primary);
+  }
+</style>
+</head>
+<body>
+
+  <h1 class="main-title">Campus Event Recommendation Engine</h1>
+  <p class="subtitle">Intelligent, Open Source, and Self-Hosted Master Plan</p>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('plan')">Implementation Roadmap</div>
+    <div class="tab" onclick="switchTab('stack')">Open Source Architecture</div>
+  </div>
+
+  <!-- TAB 1: IMPLEMENTATION PLAN -->
+  <div id="tab-plan" class="tab-content active">
+    
+    <!-- Summary row -->
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-val">5</div>
+        <div class="stat-label">Phases</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">20</div>
+        <div class="stat-label">Weeks total</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">3</div>
+        <div class="stat-label">User roles</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">ML</div>
+        <div class="stat-label">Powered core</div>
+      </div>
+    </div>
+
+    <!-- Timeline bar -->
+    <p class="section-label">Delivery timeline</p>
+    <div class="timeline-row">
+      <div class="tl-block" style="background:#EEEDFE;color:#3C3489;flex:1">Wk 1–3<br>Foundation</div>
+      <div class="tl-block" style="background:#E1F5EE;color:#085041;flex:1.2">Wk 4–8<br>Core Build</div>
+      <div class="tl-block" style="background:#FAEEDA;color:#633806;flex:1">Wk 9–12<br>ML Layer</div>
+      <div class="tl-block" style="background:#FAECE7;color:#4A1B0C;flex:0.8">Wk 13–16<br>Refinement</div>
+      <div class="tl-block" style="background:#E6F1FB;color:#0C447C;flex:0.8">Wk 17–20<br>Launch</div>
+    </div>
+
+    <!-- Phase 1 -->
+    <div class="phase-card" onclick="toggle('p1')">
+      <div class="phase-header" id="p1-hdr">
+        <span class="phase-tag" style="background:#EEEDFE;color:#3C3489">Phase 1</span>
+        <span class="phase-title">Foundation & design system</span>
+        <span class="phase-dur">Weeks 1–3</span>
+        <span class="chevron" id="p1-chev">▼</span>
+      </div>
+      <div class="phase-body" id="p1-body">
+        <div>
+          <div class="feature-pill"><span class="pill-icon" style="color:#7F77DD">🗂</span><div><div class="pill-label">Requirements workshop</div><div class="pill-desc">Map all user journeys: student, organizer, admin</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#7F77DD">🎨</span><div><div class="pill-label">UI design system</div><div class="pill-desc">Tokens, components, dark mode, accessibility</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#7F77DD">🗃</span><div><div class="pill-label">Database schema v1</div><div class="pill-desc">ERD for users, events, registrations, interactions</div></div></div>
+        </div>
+        <div>
+          <p class="section-label">Tech decisions</p>
+          <div class="feature-pill"><span class="pill-icon">⚙️</span><div><div class="pill-label">Monorepo setup</div><div class="pill-desc">React + Node.js + Python ML service + PostgreSQL</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon">🔐</span><div><div class="pill-label">Auth strategy</div><div class="pill-desc">SSO via university LDAP or OAuth2 (Google Workspace)</div></div></div>
+          <div class="stack-row">
+            <span class="stack-badge" style="background:#EEEDFE;color:#3C3489">React 18</span>
+            <span class="stack-badge" style="background:#EEEDFE;color:#3C3489">Tailwind v4</span>
+            <span class="stack-badge" style="background:#EEEDFE;color:#3C3489">Node.js</span>
+            <span class="stack-badge" style="background:#EEEDFE;color:#3C3489">PostgreSQL</span>
+            <span class="stack-badge" style="background:#EEEDFE;color:#3C3489">Redis</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase-card" onclick="toggle('p2')">
+      <div class="phase-header" id="p2-hdr">
+        <span class="phase-tag" style="background:#E1F5EE;color:#085041">Phase 2</span>
+        <span class="phase-title">Core portals & data layer</span>
+        <span class="phase-dur">Weeks 4–8</span>
+        <span class="chevron" id="p2-chev">▼</span>
+      </div>
+      <div class="phase-body" id="p2-body">
+        <div>
+          <p class="section-label">Student portal</p>
+          <div class="feature-pill"><span class="pill-icon" style="color:#1D9E75">🏠</span><div><div class="pill-label">Discovery feed</div><div class="pill-desc">Swipeable event cards with category filters & tags</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#1D9E75">🔔</span><div><div class="pill-label">Notification centre</div><div class="pill-desc">In-app + email + push via Socket.IO & Firebase</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#1D9E75">🎫</span><div><div class="pill-label">QR registration flow</div><div class="pill-desc">Register → get QR code → auto-add to calendar</div></div></div>
+        </div>
+        <div>
+          <p class="section-label">Organizer portal</p>
+          <div class="feature-pill"><span class="pill-icon" style="color:#1D9E75">📅</span><div><div class="pill-label">Event builder</div><div class="pill-desc">Rich form: cover image, tags, capacity, co-hosts</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#1D9E75">📷</span><div><div class="pill-label">QR scanner PWA</div><div class="pill-desc">Works offline, syncs attendance on reconnect</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#1D9E75">⚡</span><div><div class="pill-label">Live dashboard</div><div class="pill-desc">Real-time headcount, capacity alerts, waitlist</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase-card" onclick="toggle('p3')">
+      <div class="phase-header" id="p3-hdr">
+        <span class="phase-tag" style="background:#FAEEDA;color:#633806">Phase 3</span>
+        <span class="phase-title">Recommendation engine & ML pipeline</span>
+        <span class="phase-dur">Weeks 9–12</span>
+        <span class="chevron" id="p3-chev">▼</span>
+      </div>
+      <div class="phase-body" id="p3-body">
+        <div>
+          <p class="section-label">Better ML approach</p>
+          <div class="feature-pill"><span class="pill-icon" style="color:#BA7517">🧠</span><div><div class="pill-label">Two-stage ranking</div><div class="pill-desc">Stage 1: candidate recall via KNN. Stage 2: XGBoost re-ranker on rich features.</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#BA7517">🏷</span><div><div class="pill-label">Semantic event tagging</div><div class="pill-desc">Embed event descriptions with sentence-transformers for cold-start matching</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#BA7517">📈</span><div><div class="pill-label">Implicit signals</div><div class="pill-desc">Track dwell time, scroll depth, share — not just clicks</div></div></div>
+        </div>
+        <div>
+          <p class="section-label">Feature signals used</p>
+          <div style="display:flex;flex-direction:column;gap:10px; margin-bottom: 12px;">
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+              <div style="width:100px;height:8px;border-radius:4px;background:#E8593C;opacity:.85"></div>
+              <span style="color:var(--color-text-secondary);font-weight:500;">Past event attendance</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+              <div style="width:80px;height:8px;border-radius:4px;background:#E8593C;opacity:.7"></div>
+              <span style="color:var(--color-text-secondary);font-weight:500;">Department & year match</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+              <div style="width:65px;height:8px;border-radius:4px;background:#E8593C;opacity:.55"></div>
+              <span style="color:var(--color-text-secondary);font-weight:500;">Peer similarity (KNN)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+              <div style="width:50px;height:8px;border-radius:4px;background:#E8593C;opacity:.4"></div>
+              <span style="color:var(--color-text-secondary);font-weight:500;">Declared interest tags</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+              <div style="width:35px;height:8px;border-radius:4px;background:#E8593C;opacity:.3"></div>
+              <span style="color:var(--color-text-secondary);font-weight:500;">Time-of-day preference</span>
+            </div>
+          </div>
+          <div class="feature-pill"><span class="pill-icon" style="color:#BA7517">🔁</span><div><div class="pill-label">Feedback loop</div><div class="pill-desc">Post-event ratings retrain model weekly via Celery task</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase-card" onclick="toggle('p4')">
+      <div class="phase-header" id="p4-hdr">
+        <span class="phase-tag" style="background:#FAECE7;color:#4A1B0C">Phase 4</span>
+        <span class="phase-title">Smart features & AI assistant</span>
+        <span class="phase-dur">Weeks 13–16</span>
+        <span class="chevron" id="p4-chev">▼</span>
+      </div>
+      <div class="phase-body" id="p4-body">
+        <div>
+          <div class="feature-pill"><span class="pill-icon" style="color:#993C1D">🤖</span><div><div class="pill-label">AI chatbot (RAG-based)</div><div class="pill-desc">Use Ollama Llama3 + event knowledge base. Handles FAQs, eligibility, venue questions.</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#993C1D">📄</span><div><div class="pill-label">Auto certificate PDF</div><div class="pill-desc">Triggered on QR scan completion, e-signed via campus seal</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#993C1D">⚠️</span><div><div class="pill-label">Conflict resolver</div><div class="pill-desc">Detect venue/time clashes. Suggest optimal rescheduling using historical peak-hours data.</div></div></div>
+        </div>
+        <div>
+          <div class="feature-pill"><span class="pill-icon" style="color:#993C1D">📊</span><div><div class="pill-label">Admin analytics suite</div><div class="pill-desc">Funnel view, demographic heatmaps, CSV export, semester comparison</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#993C1D">🗓</span><div><div class="pill-label">Calendar sync</div><div class="pill-desc">Export registered events to Google Calendar / iCal with reminders</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#993C1D">🏆</span><div><div class="pill-label">Gamification layer</div><div class="pill-desc">Attendance streaks, department leaderboards, badge system to drive repeat engagement</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="phase-card" onclick="toggle('p5')">
+      <div class="phase-header" id="p5-hdr">
+        <span class="phase-tag" style="background:#E6F1FB;color:#0C447C">Phase 5</span>
+        <span class="phase-title">Testing, hardening & launch</span>
+        <span class="phase-dur">Weeks 17–20</span>
+        <span class="chevron" id="p5-chev">▼</span>
+      </div>
+      <div class="phase-body" id="p5-body">
+        <div>
+          <div class="feature-pill"><span class="pill-icon" style="color:#185FA5">🧪</span><div><div class="pill-label">A/B test recommendations</div><div class="pill-desc">Measure CTR & attendance lift from ML vs. rule-based baseline</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#185FA5">♿</span><div><div class="pill-label">WCAG 2.1 audit</div><div class="pill-desc">Screen reader, keyboard nav, color contrast — all portals</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#185FA5">🔒</span><div><div class="pill-label">Security hardening</div><div class="pill-desc">Pen test, rate limiting, GDPR consent flows, data anonymization</div></div></div>
+        </div>
+        <div>
+          <div class="feature-pill"><span class="pill-icon" style="color:#185FA5">🚀</span><div><div class="pill-label">Staged rollout</div><div class="pill-desc">Beta with 2–3 clubs → all organizers → full student body</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#185FA5">📈</span><div><div class="pill-label">KPI dashboard</div><div class="pill-desc">Track: attendance rate, recommendation CTR, NPS score, avg. events/student</div></div></div>
+          <div class="feature-pill" style="margin-top:8px"><span class="pill-icon" style="color:#185FA5">📘</span><div><div class="pill-label">Documentation</div><div class="pill-desc">API docs (Swagger), organizer guide, admin runbook</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UI ideas section -->
+    <p class="section-label" style="margin-top:2.5rem">Better UI ideas for Implementation</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="hl">
+        <div class="hl-title">🗺 Map view for events</div>
+        <div class="hl-body">Let students see events plotted on a campus map. Filter by walking distance from current location.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-title">📱 "For You" story reel</div>
+        <div class="hl-body">Vertical swipe format (like Instagram Stories) for AI-recommended events — higher engagement than a list.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-title">👥 "Friends going" badge</div>
+        <div class="hl-body">Show avatar stack of peers who registered. Social proof is the single strongest driver of student attendance.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-title">⏳ Urgency indicators</div>
+        <div class="hl-body">"Only 8 spots left" live counter with a subtle progress bar on each event card. Real-time via Socket.IO.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-title">📆 Week at a glance</div>
+        <div class="hl-body">Horizontal timeline widget on the home screen showing registered + suggested events across the next 7 days.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-title">🎨 Organizer brand kit</div>
+        <div class="hl-body">Clubs upload a logo + color palette. Event cards auto-inherit club branding — makes feed feel richer, not generic.</div>
+      </div>
+    </div>
+
+    <button class="action-button" onclick="alert('Action triggered: Generate wireframes')">
+      Generate wireframe description for the student discovery feed ↗
+    </button>
+
+  </div>
+
+  <!-- TAB 2: TECH STACK -->
+  <div id="tab-stack" class="tab-content">
+
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-val">100%</div>
+        <div class="stat-label">Free to self-host</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">$0</div>
+        <div class="stat-label">Licensing cost</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">22</div>
+        <div class="stat-label">Tools listed</div>
+      </div>
+    </div>
+
+    <!-- Frontend -->
+    <div class="os-card">
+      <div class="os-header">
+        <span class="layer-badge" style="background:#E6F1FB;color:#0C447C">Frontend</span>
+        <span class="os-layer-title">UI & client</span>
+      </div>
+      <div class="tools-grid">
+        <div class="tool" onclick="pick(this,'react','React 18','MIT','46.2k ★ weekly downloads','The open source foundation for the entire SPA. MIT licensed, maintained by Meta and a massive community. Will outlive any proprietary alternative.','npm install react react-dom')">
+          <div class="tool-name">React 18</div><div class="tool-role">UI framework</div><div class="tool-stars">★ 228k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'vite','Vite','MIT','Best DX in the ecosystem','Esbuild-powered dev server. 10–100× faster cold starts than Webpack. Rollup under the hood for production. No config needed for React.','npm create vite@latest my-app -- --template react-ts')">
+          <div class="tool-name">Vite</div><div class="tool-role">Build tool</div><div class="tool-stars">★ 67k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'shadcn','shadcn/ui','MIT','Copy-paste components','Not a library — you own the code. Built on Radix UI primitives (accessible) + Tailwind. Modals, date pickers, dropdowns, all WCAG 2.1 compliant out of the box.','npx shadcn-ui@latest init')">
+          <div class="tool-name">shadcn/ui</div><div class="tool-role">Component system</div><div class="tool-stars">★ 75k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'tanstack','TanStack Query','MIT','Replaces useEffect + fetch','Server state management: caching, background refetching, optimistic updates, infinite scroll. Eliminates 80% of the state management complexity in the student feed.','npm install @tanstack/react-query')">
+          <div class="tool-name">TanStack Query</div><div class="tool-role">Server state</div><div class="tool-stars">★ 41k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'zxing','ZXing-js','Apache 2.0','QR scanning in browser','Decodes QR codes from camera stream in the browser. Used for the organizer PWA scanner. No native app needed — runs entirely client-side via WebRTC.','npm install @zxing/library')">
+          <div class="tool-name">ZXing-js</div><div class="tool-role">QR scanner (PWA)</div><div class="tool-stars">★ 3.5k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'qrcode','qrcode.react','MIT','QR generation','Generates the student\'s registration QR code as an SVG or canvas element. Renders instantly, no server round-trip for display.','npm install qrcode.react')">
+          <div class="tool-name">qrcode.react</div><div class="tool-role">QR generation</div><div class="tool-stars">★ 4k GitHub</div>
+        </div>
+      </div>
+      <div class="tool-info" id="info-react"></div><div class="tool-info" id="info-vite"></div>
+      <div class="tool-info" id="info-shadcn"></div><div class="tool-info" id="info-tanstack"></div>
+      <div class="tool-info" id="info-zxing"></div><div class="tool-info" id="info-qrcode"></div>
+    </div>
+
+    <!-- Backend -->
+    <div class="os-card">
+      <div class="os-header">
+        <span class="layer-badge" style="background:#EAF3DE;color:#3B6D11">Backend</span>
+        <span class="os-layer-title">API & services</span>
+      </div>
+      <div class="tools-grid">
+        <div class="tool" onclick="pick(this,'express','Express.js','MIT','Most-used Node framework','Minimal, battle-tested. Pair with zod for input validation and express-rate-limit for brute-force protection. 13 years of production use.','npm install express zod express-rate-limit')">
+          <div class="tool-name">Express.js</div><div class="tool-role">HTTP server</div><div class="tool-stars">★ 65k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'fastapi','FastAPI','MIT','Fastest Python web framework','Async, auto-generates OpenAPI docs, type-safe via Pydantic. 3× faster than Flask for ML inference serving. First-class Python async support.','pip install fastapi uvicorn[standard]')">
+          <div class="tool-name">FastAPI</div><div class="tool-role">ML microservice</div><div class="tool-stars">★ 77k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'socketio','Socket.IO','MIT','Real-time engine','WebSocket with automatic fallback to long-polling. Redis adapter for multi-instance scaling. Rooms, namespaces, and reconnection logic built in.','npm install socket.io @socket.io/redis-adapter')">
+          <div class="tool-name">Socket.IO</div><div class="tool-role">Real-time</div><div class="tool-stars">★ 60k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'bullmq','BullMQ','MIT','Redis-backed job queue','Replaces Celery for the Node stack. Handles: ML retraining jobs, PDF certificate generation, bulk notification dispatch. Retry logic, concurrency control, job scheduling.','npm install bullmq')">
+          <div class="tool-name">BullMQ</div><div class="tool-role">Job queue</div><div class="tool-stars">★ 6k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'nodemailer','Nodemailer','MIT','Email delivery','Send registration confirmations, reminders, and certificate attachments. Pair with SMTP from your university mail server or Resend (free tier).','npm install nodemailer')">
+          <div class="tool-name">Nodemailer</div><div class="tool-role">Email</div><div class="tool-stars">★ 17k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'puppeteer','Puppeteer','Apache 2.0','Headless Chrome','Renders the certificate HTML template to PDF. Runs in a BullMQ worker. Alternative: use pdfkit for pure Node PDF generation without a browser dependency.','npm install puppeteer')">
+          <div class="tool-name">Puppeteer</div><div class="tool-role">PDF certificates</div><div class="tool-stars">★ 88k GitHub</div>
+        </div>
+      </div>
+      <div class="tool-info" id="info-express"></div><div class="tool-info" id="info-fastapi"></div>
+      <div class="tool-info" id="info-socketio"></div><div class="tool-info" id="info-bullmq"></div>
+      <div class="tool-info" id="info-nodemailer"></div><div class="tool-info" id="info-puppeteer"></div>
+    </div>
+
+    <!-- Data -->
+    <div class="os-card">
+      <div class="os-header">
+        <span class="layer-badge" style="background:#FAEEDA;color:#854F0B">Data</span>
+        <span class="os-layer-title">Storage & caching</span>
+      </div>
+      <div class="tools-grid">
+        <div class="tool" onclick="pick(this,'postgres','PostgreSQL 16','PostgreSQL','ACID, JSON, full-text','The gold standard open source RDBMS. JSONB columns for flexible event metadata. Full-text search via tsvector — can replace a separate search service for a campus-scale app.','docker run -e POSTGRES_PASSWORD=pw postgres:16')">
+          <div class="tool-name">PostgreSQL 16</div><div class="tool-role">Primary DB</div><div class="tool-stars">★ 15k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'prisma','Prisma ORM','Apache 2.0','Type-safe DB client','Schema-first ORM. Generates TypeScript types from your schema. Migrations, seeds, and an introspection tool included. Prevents SQL injection by design.','npm install prisma @prisma/client')">
+          <div class="tool-name">Prisma ORM</div><div class="tool-role">ORM + migrations</div><div class="tool-stars">★ 39k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'redis','Redis','BSD 3-clause','Caching + pub/sub','Used for: recommendation cache (10 min TTL), Socket.IO adapter, BullMQ job store, rate limiter state. One Redis instance serves all four roles.','docker run -p 6379:6379 redis:7-alpine')">
+          <div class="tool-name">Redis 7</div><div class="tool-role">Cache + pub/sub</div><div class="tool-stars">★ 65k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'minio','MinIO','AGPL v3','S3-compatible self-hosted','Drop-in S3 replacement. Stores event cover images, organizer logos, PDF certificates. Use the AWS SDK — just swap the endpoint URL. No AWS account or cost.','docker run -p 9000:9000 minio/minio server /data')">
+          <div class="tool-name">MinIO</div><div class="tool-role">Object storage</div><div class="tool-stars">★ 47k GitHub</div>
+        </div>
+      </div>
+      <div class="tool-info" id="info-postgres"></div><div class="tool-info" id="info-prisma"></div>
+      <div class="tool-info" id="info-redis"></div><div class="tool-info" id="info-minio"></div>
+    </div>
+
+    <!-- ML -->
+    <div class="os-card">
+      <div class="os-header">
+        <span class="layer-badge" style="background:#EEEDFE;color:#3C3489">ML & AI</span>
+        <span class="os-layer-title">Recommendation & chatbot</span>
+      </div>
+      <div class="tools-grid">
+        <div class="tool" onclick="pick(this,'faiss','FAISS','MIT','Facebook AI Research','Approximate nearest-neighbour search. Finds 50 candidate events from a pool of thousands in < 5ms. Used in Stage 1 of the recommendation pipeline.','pip install faiss-cpu')">
+          <div class="tool-name">FAISS</div><div class="tool-role">Vector search</div><div class="tool-stars">★ 31k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'xgb','XGBoost','Apache 2.0','Best tabular ML','Stage 2 re-ranker. Trains on historical attendance data. Handles missing features gracefully. GPU training via XGBoost CUDA if available.','pip install xgboost')">
+          <div class="tool-name">XGBoost</div><div class="tool-role">Re-ranker model</div><div class="tool-stars">★ 26k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'sbert','Sentence-Transformers','Apache 2.0','HuggingFace ecosystem','Embeds event descriptions + student interests into a shared vector space. Model: all-MiniLM-L6-v2 (fast, 384-dim). Enables semantic cold-start matching.','pip install sentence-transformers')">
+          <div class="tool-name">Sentence-Transformers</div><div class="tool-role">Semantic embeddings</div><div class="tool-stars">★ 15k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'ollama','Ollama + Llama 3','MIT','Self-hosted LLM','Run Llama 3.1 8B locally for the AI chatbot. Zero API cost, no data leaves your server — important for university data policies. Use llama-index for RAG over your event database.','curl -fsSL https://ollama.ai/install.sh | sh && ollama pull llama3.1')">
+          <div class="tool-name">Ollama + Llama 3</div><div class="tool-role">Self-hosted LLM</div><div class="tool-stars">★ 87k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'llamaindex','LlamaIndex','MIT','RAG framework','Connects Llama 3 to your PostgreSQL event database. Indexes event descriptions, FAQs, and venue info. Students ask natural language questions; the chatbot retrieves relevant context.','pip install llama-index llama-index-vector-stores-postgres')">
+          <div class="tool-name">LlamaIndex</div><div class="tool-role">RAG orchestration</div><div class="tool-stars">★ 36k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'mlflow','MLflow','Apache 2.0','Experiment tracking','Logs model metrics (AUC-ROC, NDCG@10) for every training run. Stores model artifacts. Lets you compare XGBoost v1 vs v2 and roll back if a new model performs worse.','pip install mlflow')">
+          <div class="tool-name">MLflow</div><div class="tool-role">Model tracking</div><div class="tool-stars">★ 18k GitHub</div>
+        </div>
+      </div>
+      <div class="tool-info" id="info-faiss"></div><div class="tool-info" id="info-xgb"></div>
+      <div class="tool-info" id="info-sbert"></div><div class="tool-info" id="info-ollama"></div>
+      <div class="tool-info" id="info-llamaindex"></div><div class="tool-info" id="info-mlflow"></div>
+    </div>
+
+    <!-- DevOps -->
+    <div class="os-card">
+      <div class="os-header">
+        <span class="layer-badge" style="background:#E1F5EE;color:#085041">DevOps</span>
+        <span class="os-layer-title">Infra, monitoring & observability</span>
+      </div>
+      <div class="tools-grid">
+        <div class="tool" onclick="pick(this,'docker','Docker + Compose','Apache 2.0','Container runtime','One docker-compose.yml boots the entire stack: React, Node API, FastAPI ML, Redis, Postgres, MinIO. Every developer gets an identical environment.','docker compose up --build')">
+          <div class="tool-name">Docker + Compose</div><div class="tool-role">Containerisation</div><div class="tool-stars">★ 28k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'grafana','Grafana + Prometheus','AGPL v3','Full observability stack','Prometheus scrapes metrics from all services. Grafana dashboards show request rate, recommendation latency, ML inference time, DB query time. Pre-built Node.js and Postgres exporters.','docker compose include grafana prometheus')">
+          <div class="tool-name">Grafana + Prometheus</div><div class="tool-role">Metrics + dashboards</div><div class="tool-stars">★ 63k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'posthog','PostHog','MIT','Product analytics','Self-hostable Google Analytics alternative. Tracks: recommendation CTR, registration funnel drop-off, feature usage. GDPR-compliant by design — important for a university.','docker compose -f docker-compose.hobby.yml up')">
+          <div class="tool-name">PostHog</div><div class="tool-role">Product analytics</div><div class="tool-stars">★ 22k GitHub</div>
+        </div>
+        <div class="tool" onclick="pick(this,'glitchtip','GlitchTip','MIT','Open source Sentry','Catches and groups backend errors + frontend crashes. Self-hostable Sentry alternative. Sends alerts to Slack when error rates spike.','docker run glitchtip/glitchtip')">
+          <div class="tool-name">GlitchTip</div><div class="tool-role">Error tracking</div><div class="tool-stars">★ 1.5k GitHub</div>
+        </div>
+      </div>
+      <div class="tool-info" id="info-docker"></div><div class="tool-info" id="info-grafana"></div>
+      <div class="tool-info" id="info-posthog"></div><div class="tool-info" id="info-glitchtip"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="highlight-row">
+      <div class="hl">
+        <div class="hl-title"><span class="tag tag-self">SELF-HOSTED</span> Fully offline capable</div>
+        <div class="hl-body">Every tool in this stack can run on a single university server. Postgres + Redis + MinIO + Ollama — no data leaves campus. Critical for GDPR and institutional data policies.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-title"><span class="tag tag-mit">MIT / Apache</span> Permissive licenses</div>
+        <div class="hl-body">All tools use MIT, Apache 2.0, or BSD licenses. AGPL tools (MinIO, PostHog, Grafana) are fine for internal campus use — AGPL only restricts distributing the software itself.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-title"><span class="tag tag-apache">UPGRADE PATH</span> Cloud-ready</div>
+        <div class="hl-body">MinIO → S3, Ollama → Claude API, self-hosted Postgres → Neon/Supabase, Redis → Upstash. Every component has a managed cloud equivalent if the team outgrows self-hosting.</div>
+      </div>
+    </div>
+
+    <button class="action-button" onclick="alert('Action triggered: Generate Docker Compose')">
+      Generate the docker-compose.yml for this entire stack ↗
+    </button>
+
+  </div>
+
+<script>
+// Tab Switching Logic
+function switchTab(tabId) {
+  // Update active tab buttons
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  // Update active tab content
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+}
+
+// Plan Accordion Logic
+function toggle(id){
+  const body=document.getElementById(id+'-body');
+  const chev=document.getElementById(id+'-chev');
+  const hdr=document.getElementById(id+'-hdr');
+  const open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  
+  // Custom chevron logic since we changed from icon to text for standalone support
+  if (!open) {
+    chev.innerHTML = '▲';
+    chev.style.transform = '';
+  } else {
+    chev.innerHTML = '▼';
+  }
+  hdr.classList.toggle('open',!open);
+}
+
+// Tech Stack Tools Logic
+const details={
+  react:{license:'MIT',install:'npm install react react-dom',why:'The open source foundation for the entire SPA. 228k GitHub stars, maintained by Meta and a massive community. Will outlive any proprietary framework.'},
+  vite:{license:'MIT',install:'npm create vite@latest app -- --template react-ts',why:'Esbuild-powered HMR — instant feedback during development. 10–100× faster cold starts than Webpack. Rollup for production builds.'},
+  shadcn:{license:'MIT',install:'npx shadcn-ui@latest init',why:'You own the component code — no black-box dependency. Built on Radix UI (accessible) + Tailwind. Every component is WCAG 2.1 compliant.'},
+  tanstack:{license:'MIT',install:'npm install @tanstack/react-query',why:'Eliminates useEffect spaghetti for server data. Caching, background refetch, optimistic updates, infinite scroll — all built in.'},
+  zxing:{license:'Apache 2.0',install:'npm install @zxing/library',why:'Decodes QR codes from camera stream entirely in the browser via WebRTC. The organizer\'s check-in tool with no native app needed.'},
+  qrcode:{license:'MIT',install:'npm install qrcode.react',why:'Generates student registration QR codes as SVG or canvas. Instant, client-side, no server round-trip.'},
+  express:{license:'MIT',install:'npm install express zod express-rate-limit helmet',why:'13 years of production hardening. Minimal surface area — you wire what you need. Pair with zod for input validation and helmet for security headers.'},
+  fastapi:{license:'MIT',install:'pip install fastapi uvicorn[standard] pydantic',why:'Async Python web framework — 3× faster than Flask. Auto-generates OpenAPI docs. Type-safe via Pydantic. First choice for ML serving.'},
+  socketio:{license:'MIT',install:'npm install socket.io @socket.io/redis-adapter',why:'WebSocket with long-polling fallback. Redis adapter bridges multiple Node instances. Rooms, reconnection, and namespaces built in.'},
+  bullmq:{license:'MIT',install:'npm install bullmq',why:'Redis-backed job queue for the Node stack. Handles ML retraining triggers, PDF certificate generation, bulk notification dispatch. Retry logic and cron scheduling included.'},
+  nodemailer:{license:'MIT',install:'npm install nodemailer',why:'Battle-tested email sending. Works with your university SMTP server directly — no third-party email service needed.'},
+  puppeteer:{license:'Apache 2.0',install:'npm install puppeteer',why:'Renders HTML certificate templates to pixel-perfect PDFs via headless Chrome. Alternative: pdfkit for a pure Node PDF approach without a browser dependency.'},
+  postgres:{license:'PostgreSQL (open)',install:'docker run -e POSTGRES_PASSWORD=pw postgres:16',why:'ACID transactions, JSONB columns, full-text search via tsvector, row-level security. The most feature-complete open source RDBMS. 35 years of production use.'},
+  prisma:{license:'Apache 2.0',install:'npm install prisma @prisma/client && npx prisma init',why:'Schema-first ORM that generates TypeScript types. Prevents SQL injection by design. Migrations, seeds, and DB introspection included.'},
+  redis:{license:'BSD 3-clause',install:'docker run -p 6379:6379 redis:7-alpine',why:'Serves four roles: recommendation cache (TTL), Socket.IO pub/sub adapter, BullMQ job store, rate limiter state. One instance, four jobs.'},
+  minio:{license:'AGPL v3 (self-hosted ok)',install:'docker run -p 9000:9000 minio/minio server /data',why:'S3-compatible object storage you host yourself. Stores event images, logos, and PDFs. Use the AWS SDK — just change the endpoint URL. No AWS bill.'},
+  faiss:{license:'MIT',install:'pip install faiss-cpu',why:'Facebook AI Research vector search. Finds 50 nearest-neighbour candidates from thousands of events in < 5ms using approximate search. Stage 1 of the recommendation pipeline.'},
+  xgb:{license:'Apache 2.0',install:'pip install xgboost',why:'Gradient-boosted trees — the best model for tabular data with mixed feature types. Stage 2 re-ranker. Handles missing values natively. GPU training available.'},
+  sbert:{license:'Apache 2.0',install:'pip install sentence-transformers',why:'Embeds event descriptions and student interest tags into a shared 384-dim vector space. Model: all-MiniLM-L6-v2. Solves cold-start: new events matched semantically without history.'},
+  ollama:{license:'MIT',install:'curl -fsSL https://ollama.ai/install.sh | sh && ollama pull llama3.1',why:'Run Llama 3.1 8B locally. Zero API cost, no data leaves your server. The right choice for universities with strict data residency requirements.'},
+  llamaindex:{license:'MIT',install:'pip install llama-index llama-index-vector-stores-postgres',why:'Connects Llama 3 to your Postgres event database via RAG. Students ask natural language questions; LlamaIndex retrieves relevant event context and feeds it to the model.'},
+  mlflow:{license:'Apache 2.0',install:'pip install mlflow && mlflow ui',why:'Logs every training run: hyperparameters, AUC-ROC, NDCG@10, model artifact. Compare XGBoost v1 vs v2. Roll back if a new model performs worse after weekly retraining.'},
+  docker:{license:'Apache 2.0',install:'docker compose up --build',why:'One docker-compose.yml boots the entire stack locally. Every developer gets an identical environment. CI builds the same image that ships to production.'},
+  grafana:{license:'AGPL v3',install:'docker compose include grafana prometheus node-exporter',why:'Prometheus scrapes metrics from all services. Grafana dashboards: request rate, p95 latency, ML inference time, DB query time, recommendation cache hit rate.'},
+  posthog:{license:'MIT',install:'docker compose -f docker-compose.hobby.yml up',why:'Self-hostable Google Analytics alternative. Tracks: recommendation CTR, registration funnel, feature usage. GDPR-compliant — student data stays on campus.'},
+  glitchtip:{license:'MIT',install:'docker run glitchtip/glitchtip',why:'Open source Sentry alternative. Catches and groups backend errors and frontend crashes. Slack alerts when error rate spikes. Far cheaper than Sentry paid plans.'},
+};
+
+let activeEl=null, activeId=null;
+function pick(el,id,name,license,stars,why,install){
+  if(activeEl===el){
+    el.classList.remove('active');
+    document.getElementById('info-'+id).classList.remove('open');
+    activeEl=null; activeId=null; return;
+  }
+  if(activeEl){
+    activeEl.classList.remove('active');
+    document.getElementById('info-'+activeId).classList.remove('open');
+  }
+  el.classList.add('active');
+  activeEl=el; activeId=id;
+  const d=details[id];
+  const info=document.getElementById('info-'+id);
+  info.innerHTML=`<div class="info-title">${name} <span class="tag tag-mit">${license}</span></div><div class="info-body">${d.why}</div><div class="code">${d.install}</div>`;
+  info.classList.add('open');
+}
+</script>
+</body>
+</html>
