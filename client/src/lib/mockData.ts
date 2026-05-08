@@ -1,4 +1,4 @@
-import { CampusEvent, EventCategory, User, UserRole, Registration } from '../types';
+import { CampusEvent, EventCategory, User, UserRole, Registration, EventStatus } from '../types';
 
 export const MOCK_USERS: User[] = [
   {
@@ -43,8 +43,13 @@ export const MOCK_EVENTS: CampusEvent[] = [
     registeredCount: 12,
     checkedInCount: 0,
     imageUrl: 'https://picsum.photos/seed/code/1200/800',
+    assets: {
+      bannerUrl: 'https://picsum.photos/seed/code/1200/800',
+      logoUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Code'
+    },
     tags: ['coding', 'mobile', 'react'],
     coordinates: { lat: 37.4285, lng: -122.1747 },
+    status: EventStatus.APPROVED,
   },
   {
     id: 'e2',
@@ -59,8 +64,13 @@ export const MOCK_EVENTS: CampusEvent[] = [
     registeredCount: 342,
     checkedInCount: 0,
     imageUrl: 'https://picsum.photos/seed/music/1200/800',
+    assets: {
+      bannerUrl: 'https://picsum.photos/seed/music/1200/800',
+      logoUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Music'
+    },
     tags: ['music', 'festival', 'spring'],
     coordinates: { lat: 37.4275, lng: -122.1697 },
+    status: EventStatus.APPROVED,
   },
   {
     id: 'e3',
@@ -75,8 +85,13 @@ export const MOCK_EVENTS: CampusEvent[] = [
     registeredCount: 48,
     checkedInCount: 42,
     imageUrl: 'https://picsum.photos/seed/algo/1200/800',
+    assets: {
+      bannerUrl: 'https://picsum.photos/seed/algo/1200/800',
+      logoUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Hack'
+    },
     tags: ['hackathon', 'algorithms', 'prep'],
     coordinates: { lat: 37.4295, lng: -122.1717 },
+    status: EventStatus.APPROVED,
   },
   {
     id: 'e4',
@@ -91,8 +106,13 @@ export const MOCK_EVENTS: CampusEvent[] = [
     registeredCount: 5,
     checkedInCount: 0,
     imageUrl: 'https://picsum.photos/seed/design/1200/800',
+    assets: {
+      bannerUrl: 'https://picsum.photos/seed/design/1200/800',
+      logoUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=UX'
+    },
     tags: ['ux', 'design', 'ui'],
     coordinates: { lat: 37.4265, lng: -122.1727 },
+    status: EventStatus.APPROVED,
   }
 ];
 
@@ -101,6 +121,8 @@ export const MOCK_REGISTRATIONS: Registration[] = [
     id: 'r1',
     eventId: 'e1',
     userEmail: 'alex@college.edu',
+    userName: 'Alex Chen',
+    organizerEmail: 'sarah@college.edu',
     timestamp: new Date().toISOString(),
     checkedIn: false,
     qrCode: 'qr-e1-alex',

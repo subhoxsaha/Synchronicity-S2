@@ -1,0 +1,337 @@
+
+<style>
+*{box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--color-background-secondary);padding:5px;border-radius:12px}
+.tab{flex:1;text-align:center;padding:7px 4px;border-radius:9px;font-size:12px;font-weight:500;cursor:pointer;color:var(--color-text-secondary);transition:all .18s;border:none;background:none}
+.tab.on{background:var(--color-background-primary);color:var(--color-text-primary);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.pane{display:none}.pane.on{display:block}
+.section-label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-secondary);margin:14px 0 7px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.card{background:var(--color-background-secondary);border-radius:10px;padding:11px 13px}
+.card-ico{font-size:18px;margin-bottom:5px}
+.card-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.card-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.pill{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;margin-top:5px}
+.phase-block{border:0.5px solid var(--color-border-tertiary);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.phase-hdr{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;background:var(--color-background-primary)}
+.phase-hdr:hover{background:var(--color-background-secondary)}
+.phase-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.phase-title{font-size:13px;font-weight:500;color:var(--color-text-primary);flex:1}
+.phase-wk{font-size:11px;color:var(--color-text-secondary);white-space:nowrap}
+.phase-chev{font-size:14px;color:var(--color-text-tertiary);transition:transform .2s;flex-shrink:0}
+.phase-chev.open{transform:rotate(180deg)}
+.phase-body{display:none;border-top:0.5px solid var(--color-border-tertiary);padding:12px 13px}
+.phase-body.open{display:block}
+.task{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.task-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.post-type{border:0.5px solid var(--color-border-tertiary);border-radius:10px;padding:11px 13px;margin-bottom:8px}
+.post-type-hdr{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.post-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.post-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.post-sub{font-size:11px;color:var(--color-text-secondary)}
+.field-list{display:flex;flex-wrap:wrap;gap:5px}
+.field{background:var(--color-background-secondary);border-radius:6px;padding:4px 9px;font-size:11px;color:var(--color-text-secondary)}
+.field.key{background:var(--color-background-info);color:var(--color-text-info)}
+.flow-wrap{display:flex;align-items:center;flex-wrap:wrap;gap:4px;background:var(--color-background-secondary);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.fs{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:500;color:var(--color-text-primary)}
+.fa{font-size:12px;color:var(--color-text-tertiary)}
+.role-banner{border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.rb-title{font-size:14px;font-weight:600;margin-bottom:5px}
+.rb-desc{font-size:12px;line-height:1.6;opacity:.85}
+.rb-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.rb-pill{background:rgba(255,255,255,.2);border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500}
+.tl-row{display:flex;gap:5px;margin-bottom:10px}
+.tl-blk{flex:1;border-radius:8px;padding:8px 6px;text-align:center;font-size:10px;font-weight:500}
+</style>
+
+<h2 class="sr-only">Campus App — Initial Plan with Three User Types</h2>
+<div style="padding:.5rem 0 1rem">
+
+<!-- top stats -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px">
+  <div class="card" style="text-align:center"><div style="font-size:20px;font-weight:600;color:var(--color-text-primary)">3</div><div style="font-size:11px;color:var(--color-text-secondary)">User roles</div></div>
+  <div class="card" style="text-align:center"><div style="font-size:20px;font-weight:600;color:var(--color-text-primary)">5</div><div style="font-size:11px;color:var(--color-text-secondary)">Post types</div></div>
+  <div class="card" style="text-align:center"><div style="font-size:20px;font-weight:600;color:var(--color-text-primary)">16</div><div style="font-size:11px;color:var(--color-text-secondary)">Weeks</div></div>
+  <div class="card" style="text-align:center"><div style="font-size:20px;font-weight:600;color:var(--color-text-primary)">🔥</div><div style="font-size:11px;color:var(--color-text-secondary)">Firebase auth</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" onclick="sw('roles')">👥 User Roles</button>
+  <button class="tab" onclick="sw('posts')">📋 Post System</button>
+  <button class="tab" onclick="sw('phases')">🗓 Plan</button>
+  <button class="tab" onclick="sw('firebase')">🔥 Auth Flow</button>
+</div>
+
+<!-- ROLES -->
+<div class="pane on" id="pane-roles">
+
+  <div class="role-banner" style="background:linear-gradient(135deg,#1a6fb5,#2d9cdb);color:#fff">
+    <div class="rb-title">🎓 Student</div>
+    <div class="rb-desc">The primary consumer. Discovers events, RSVPs, attends, collects certificates and badges. Cannot create posts. Their interactions (views, clicks, RSVPs) train the recommendation engine.</div>
+    <div class="rb-pills">
+      <span class="rb-pill">Browse feed</span><span class="rb-pill">RSVP to events</span><span class="rb-pill">QR check-in</span><span class="rb-pill">Earn badges</span><span class="rb-pill">AI chatbot</span><span class="rb-pill">Certificate wallet</span>
+    </div>
+  </div>
+
+  <div class="role-banner" style="background:linear-gradient(135deg,#1a7a5e,#27ae85);color:#fff">
+    <div class="rb-title">📣 Organizer — Clubs · Cells · Committees · Departments</div>
+    <div class="rb-desc">The content creators. A single "Organizer" role covers all entity types: student clubs, faculty cells, technical committees, cultural groups, or academic departments. Each entity gets its own verified page and can publish contextual posts of any type.</div>
+    <div class="rb-pills">
+      <span class="rb-pill">Create & publish posts</span><span class="rb-pill">RSVP management</span><span class="rb-pill">QR scanner</span><span class="rb-pill">Live dashboard</span><span class="rb-pill">Announcements</span><span class="rb-pill">Club page & branding</span><span class="rb-pill">Analytics</span>
+    </div>
+  </div>
+
+  <div class="role-banner" style="background:linear-gradient(135deg,#5b2d8e,#8a4ec8);color:#fff">
+    <div class="rb-title">🛡 Admin</div>
+    <div class="rb-desc">Full platform control. Approves organizer accounts, moderates posts, manages venue inventory, views campus-wide analytics, controls the gamification system, and can impersonate any account for support. Only 2–3 people should ever hold this role.</div>
+    <div class="rb-pills">
+      <span class="rb-pill">Approve organizers</span><span class="rb-pill">Moderate posts</span><span class="rb-pill">Venue database</span><span class="rb-pill">User management</span><span class="rb-pill">Campus analytics</span><span class="rb-pill">System settings</span>
+    </div>
+  </div>
+
+  <div class="section-label">What each role can & cannot do</div>
+  <div style="overflow-x:auto">
+  <table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead>
+      <tr style="background:var(--color-background-secondary)">
+        <th style="text-align:left;padding:8px 10px;font-weight:500;color:var(--color-text-secondary);border-radius:8px 0 0 0">Action</th>
+        <th style="text-align:center;padding:8px;font-weight:500;color:#1a6fb5">Student</th>
+        <th style="text-align:center;padding:8px;font-weight:500;color:#1a7a5e">Organizer</th>
+        <th style="text-align:center;padding:8px;font-weight:500;color:#5b2d8e;border-radius:0 8px 0 0">Admin</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-top:0.5px solid var(--color-border-tertiary)"><td style="padding:8px 10px;color:var(--color-text-secondary)">Browse & RSVP to posts</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td></tr>
+      <tr style="border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)"><td style="padding:8px 10px;color:var(--color-text-secondary)">Create & publish posts</td><td style="text-align:center">—</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td></tr>
+      <tr style="border-top:0.5px solid var(--color-border-tertiary)"><td style="padding:8px 10px;color:var(--color-text-secondary)">Scan QR codes (check-in)</td><td style="text-align:center">—</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td></tr>
+      <tr style="border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)"><td style="padding:8px 10px;color:var(--color-text-secondary)">View event analytics</td><td style="text-align:center">—</td><td style="text-align:center">Own events</td><td style="text-align:center">All events</td></tr>
+      <tr style="border-top:0.5px solid var(--color-border-tertiary)"><td style="padding:8px 10px;color:var(--color-text-secondary)">Approve/reject posts</td><td style="text-align:center">—</td><td style="text-align:center">—</td><td style="text-align:center">✅</td></tr>
+      <tr style="border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)"><td style="padding:8px 10px;color:var(--color-text-secondary)">Manage venues</td><td style="text-align:center">—</td><td style="text-align:center">—</td><td style="text-align:center">✅</td></tr>
+      <tr style="border-top:0.5px solid var(--color-border-tertiary)"><td style="padding:8px 10px;color:var(--color-text-secondary)">Grant organizer access</td><td style="text-align:center">—</td><td style="text-align:center">—</td><td style="text-align:center">✅</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- POSTS -->
+<div class="pane" id="pane-posts">
+  <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;line-height:1.6">Every post an organizer publishes is <strong style="color:var(--color-text-primary)">contextual</strong> — the type determines which fields appear, what the student sees, and how the AI recommendation engine weights it. Tap each post type to explore its fields.</p>
+
+  <div class="post-type">
+    <div class="post-type-hdr"><div class="post-ico" style="background:#E6F1FB;color:#185FA5">🎟</div><div><div class="post-name">Event Post</div><div class="post-sub">Workshop · Seminar · Fest · Competition · Webinar</div></div></div>
+    <div class="section-label" style="margin-top:0">Core fields</div>
+    <div class="field-list">
+      <span class="field key">Title</span><span class="field key">Cover image</span><span class="field key">Date & time</span><span class="field key">Venue / location</span><span class="field key">RSVP toggle</span><span class="field">Capacity cap</span><span class="field">Eligibility rules</span><span class="field">Co-host clubs</span><span class="field">Registration deadline</span><span class="field">Tags / interests</span><span class="field">External link</span><span class="field">Waitlist on/off</span><span class="field">Certificate on/off</span><span class="field">Paid / free toggle</span>
+    </div>
+    <div class="section-label">What student sees</div>
+    <div class="field-list"><span class="field">RSVP button</span><span class="field">Spots remaining live counter</span><span class="field">Friends going avatars</span><span class="field">Add to calendar</span><span class="field">Map pin</span></div>
+  </div>
+
+  <div class="post-type">
+    <div class="post-type-hdr"><div class="post-ico" style="background:#EAF3DE;color:#3B6D11">📢</div><div><div class="post-name">Announcement Post</div><div class="post-sub">Notice · Result · Update · Urgent alert</div></div></div>
+    <div class="section-label" style="margin-top:0">Core fields</div>
+    <div class="field-list">
+      <span class="field key">Title</span><span class="field key">Body text (rich text)</span><span class="field key">Priority level</span><span class="field">Attachment (PDF)</span><span class="field">Target audience</span><span class="field">Expiry date</span><span class="field">Pin to top</span>
+    </div>
+    <div class="section-label">What student sees</div>
+    <div class="field-list"><span class="field">Priority badge (Urgent / Info)</span><span class="field">Pinned to feed top if critical</span><span class="field">Push notification</span></div>
+  </div>
+
+  <div class="post-type">
+    <div class="post-type-hdr"><div class="post-ico" style="background:#FAEEDA;color:#854F0B">📋</div><div><div class="post-name">Recruitment Post</div><div class="post-sub">Club applications · Core team openings · Volunteer calls</div></div></div>
+    <div class="section-label" style="margin-top:0">Core fields</div>
+    <div class="field-list">
+      <span class="field key">Role title</span><span class="field key">Responsibilities</span><span class="field key">Application form (custom fields)</span><span class="field key">Deadline</span><span class="field">Skills required</span><span class="field">Year / dept eligibility</span><span class="field">Interview rounds</span><span class="field">Form link override</span>
+    </div>
+    <div class="section-label">What student sees</div>
+    <div class="field-list"><span class="field">Apply button</span><span class="field">Countdown to deadline</span><span class="field">Application tracker</span></div>
+  </div>
+
+  <div class="post-type">
+    <div class="post-type-hdr"><div class="post-ico" style="background:#EEEDFE;color:#534AB7">📸</div><div><div class="post-name">Gallery / Achievement Post</div><div class="post-sub">Event recap · Award showcase · Milestone</div></div></div>
+    <div class="section-label" style="margin-top:0">Core fields</div>
+    <div class="field-list">
+      <span class="field key">Photo grid (up to 12)</span><span class="field key">Caption</span><span class="field">Tag linked event</span><span class="field">Featured members</span><span class="field">External press link</span>
+    </div>
+    <div class="section-label">What student sees</div>
+    <div class="field-list"><span class="field">Swipeable image gallery</span><span class="field">Reactions</span><span class="field">Linked event card</span></div>
+  </div>
+
+  <div class="post-type">
+    <div class="post-type-hdr"><div class="post-ico" style="background:#FAECE7;color:#993C1D">📍</div><div><div class="post-name">Resource / Link Post</div><div class="post-sub">Study material · Recording · Form · Survey</div></div></div>
+    <div class="section-label" style="margin-top:0">Core fields</div>
+    <div class="field-list">
+      <span class="field key">Title</span><span class="field key">Resource URL</span><span class="field key">Type badge</span><span class="field">Thumbnail</span><span class="field">Access eligibility</span><span class="field">Expiry</span>
+    </div>
+    <div class="section-label">What student sees</div>
+    <div class="field-list"><span class="field">Preview card</span><span class="field">Open / Download button</span><span class="field">Gated by eligibility</span></div>
+  </div>
+
+  <div class="section-label">How contextual logic works</div>
+  <div class="g2">
+    <div class="card"><div class="card-title">📌 Same builder, different fields</div><div class="card-desc">Organizer selects post type first. The form morphs — only relevant fields appear. No unused inputs, no confusion. Each type has its own card design in the student feed.</div></div>
+    <div class="card"><div class="card-title">🎯 Audience targeting</div><div class="card-desc">Every post can be targeted: all students, specific departments, specific academic year, or students who attended a past event. Untargeted students simply don't see the post.</div></div>
+    <div class="card"><div class="card-title">🤖 ML context signal</div><div class="card-desc">Post type is a feature signal in the recommendation engine. A student who ignores recruitment posts gets them ranked lower. A student who RSVPs often sees more event posts.</div></div>
+    <div class="card"><div class="card-title">✅ Admin approval gate</div><div class="card-desc">All event and recruitment posts go into a "Pending" state. Admin approves before it reaches students. Announcements and gallery posts from verified clubs can auto-publish.</div></div>
+  </div>
+</div>
+
+<!-- PHASES -->
+<div class="pane" id="pane-phases">
+
+  <div class="tl-row">
+    <div class="tl-blk" style="background:#E6F1FB;color:#0C447C;flex:1">Wk 1–3<br>Foundation</div>
+    <div class="tl-blk" style="background:#EAF3DE;color:#27500A;flex:1.3">Wk 4–7<br>Core build</div>
+    <div class="tl-blk" style="background:#FAEEDA;color:#633806;flex:1">Wk 8–11<br>Post system</div>
+    <div class="tl-blk" style="background:#EEEDFE;color:#3C3489;flex:1">Wk 12–14<br>Intelligence</div>
+    <div class="tl-blk" style="background:#FAECE7;color:#712B13;flex:.9">Wk 15–16<br>Launch</div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-hdr" onclick="ph('p1')">
+      <div class="phase-num" style="background:#E6F1FB;color:#185FA5">1</div>
+      <div class="phase-title">Foundation — project setup & design</div>
+      <div class="phase-wk">Weeks 1–3</div>
+      <i class="ti ti-chevron-down phase-chev" id="chev-p1" aria-hidden="true"></i>
+    </div>
+    <div class="phase-body" id="body-p1">
+      <div class="task"><div class="task-dot" style="background:#185FA5"></div><div><strong>Monorepo scaffold</strong> — React (Vite) + Node.js API + Python FastAPI ML service, all in one repo with shared TypeScript types package</div></div>
+      <div class="task"><div class="task-dot" style="background:#185FA5"></div><div><strong>Firebase project setup</strong> — create project, enable Authentication (Google, Email/Password, Phone), configure Firestore security rules, set up Firebase Hosting for web app</div></div>
+      <div class="task"><div class="task-dot" style="background:#185FA5"></div><div><strong>Design system</strong> — define color tokens, typography scale, spacing, component library (shadcn/ui), light & dark mode, all three portal layouts sketched</div></div>
+      <div class="task"><div class="task-dot" style="background:#185FA5"></div><div><strong>Database schema v1</strong> — PostgreSQL ERD: users, organizer_profiles, posts, rsvps, interactions, venues, notifications, badges</div></div>
+      <div class="task"><div class="task-dot" style="background:#185FA5"></div><div><strong>Role & auth plan</strong> — decide: Firebase for auth only, Postgres for all app data. Map Firebase UID → internal user record. Define RBAC middleware for Node API.</div></div>
+      <div class="task"><div class="task-dot" style="background:#185FA5"></div><div><strong>User research</strong> — interview 5 students, 3 club organizers, 1 admin. Validate post types and RSVP needs before building</div></div>
+    </div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-hdr" onclick="ph('p2')">
+      <div class="phase-num" style="background:#EAF3DE;color:#3B6D11">2</div>
+      <div class="phase-title">Core build — auth, portals, feeds</div>
+      <div class="phase-wk">Weeks 4–7</div>
+      <i class="ti ti-chevron-down phase-chev" id="chev-p2" aria-hidden="true"></i>
+    </div>
+    <div class="phase-body" id="body-p2">
+      <div class="task"><div class="task-dot" style="background:#3B6D11"></div><div><strong>Firebase auth integration</strong> — Login / signup screens for all three roles. On first login, detect role from Firestore and redirect to correct portal. Google SSO as primary method.</div></div>
+      <div class="task"><div class="task-dot" style="background:#3B6D11"></div><div><strong>Student portal</strong> — Home feed (chronological v1, no ML yet), category filter bar, event card component, profile page, RSVP button logic with optimistic UI</div></div>
+      <div class="task"><div class="task-dot" style="background:#3B6D11"></div><div><strong>Organizer portal</strong> — Club profile page with logo/branding, post dashboard (list of own posts with status), basic settings and member management</div></div>
+      <div class="task"><div class="task-dot" style="background:#3B6D11"></div><div><strong>Admin portal</strong> — User list with role assignment, organizer approval queue, basic post moderation table, venue management CRUD</div></div>
+      <div class="task"><div class="task-dot" style="background:#3B6D11"></div><div><strong>Notification centre</strong> — Firebase Cloud Messaging for push notifications. In-app notification bell with unread badge. Socket.IO for real-time updates.</div></div>
+      <div class="task"><div class="task-dot" style="background:#3B6D11"></div><div><strong>QR registration flow</strong> — Generate HMAC-signed QR code on RSVP. Student QR wallet in profile. Organizer PWA scanner using ZXing-js.</div></div>
+    </div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-hdr" onclick="ph('p3')">
+      <div class="phase-num" style="background:#FAEEDA;color:#854F0B">3</div>
+      <div class="phase-title">Post system — all types, contextual builder</div>
+      <div class="phase-wk">Weeks 8–11</div>
+      <i class="ti ti-chevron-down phase-chev" id="chev-p3" aria-hidden="true"></i>
+    </div>
+    <div class="phase-body" id="body-p3">
+      <div class="task"><div class="task-dot" style="background:#854F0B"></div><div><strong>Contextual post builder</strong> — Single create-post screen where type selection morphs the form. Rich text body (Tiptap editor), cover image upload to MinIO/Firebase Storage, tag picker</div></div>
+      <div class="task"><div class="task-dot" style="background:#854F0B"></div><div><strong>Event post + RSVP engine</strong> — Capacity cap, waitlist logic, RSVP deadline, live spot counter via Socket.IO, conflict detection against venue calendar, "add to calendar" export</div></div>
+      <div class="task"><div class="task-dot" style="background:#854F0B"></div><div><strong>Location & map integration</strong> — Venue picker (from admin venue DB) or free-text location. Map pin on event card using Leaflet.js (open source). Campus map overlay option.</div></div>
+      <div class="task"><div class="task-dot" style="background:#854F0B"></div><div><strong>Announcement + recruitment posts</strong> — Priority levels, audience targeting (dept / year / past attendees), application form builder for recruitment posts, deadline countdown</div></div>
+      <div class="task"><div class="task-dot" style="background:#854F0B"></div><div><strong>Gallery & resource posts</strong> — Multi-image upload with drag-to-reorder, link-to-event tagging, resource gating by eligibility, PDF attachment preview</div></div>
+      <div class="task"><div class="task-dot" style="background:#854F0B"></div><div><strong>Admin approval workflow</strong> — Post enters "Pending" state, admin sees preview, approve/reject with notes. Approved → pushes to feed + triggers notifications to targeted students</div></div>
+      <div class="task"><div class="task-dot" style="background:#854F0B"></div><div><strong>Certificate auto-generation</strong> — On QR scan + event end: Puppeteer renders HTML template to PDF, attaches organizer/campus seal, emails student and adds to profile wallet</div></div>
+    </div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-hdr" onclick="ph('p4')">
+      <div class="phase-num" style="background:#EEEDFE;color:#534AB7">4</div>
+      <div class="phase-title">Intelligence layer — AI feed, chatbot, analytics</div>
+      <div class="phase-wk">Weeks 12–14</div>
+      <i class="ti ti-chevron-down phase-chev" id="chev-p4" aria-hidden="true"></i>
+    </div>
+    <div class="phase-body" id="body-p4">
+      <div class="task"><div class="task-dot" style="background:#534AB7"></div><div><strong>Interaction logging</strong> — Log every student action: view (dwell > 3s), click, RSVP, share, dismiss. Store in interactions table. This is the ML training data.</div></div>
+      <div class="task"><div class="task-dot" style="background:#534AB7"></div><div><strong>Two-stage recommender</strong> — FAISS candidate recall → XGBoost re-ranker. Cache results per user in Redis (10 min TTL). Replace chronological feed with personalised feed.</div></div>
+      <div class="task"><div class="task-dot" style="background:#534AB7"></div><div><strong>Semantic cold-start</strong> — Sentence-Transformers embeds post tags + student interest tags. New students and new posts matched semantically from day one, before any interaction history.</div></div>
+      <div class="task"><div class="task-dot" style="background:#534AB7"></div><div><strong>AI chatbot (RAG)</strong> — LlamaIndex indexes all live posts, venues, and FAQs into PostgreSQL vector store. Ollama (Llama 3.1 8B) or Claude API answers student questions contextually.</div></div>
+      <div class="task"><div class="task-dot" style="background:#534AB7"></div><div><strong>Organizer analytics</strong> — Post-level: views, RSVP rate, attendance conversion, demographic breakdown, feedback ratings, comparison to club average</div></div>
+      <div class="task"><div class="task-dot" style="background:#534AB7"></div><div><strong>Gamification</strong> — Attendance streaks, badge unlock system, department leaderboard. Admin configures rules; students see progress on their profile.</div></div>
+    </div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-hdr" onclick="ph('p5')">
+      <div class="phase-num" style="background:#FAECE7;color:#712B13">5</div>
+      <div class="phase-title">Hardening & launch</div>
+      <div class="phase-wk">Weeks 15–16</div>
+      <i class="ti ti-chevron-down phase-chev" id="chev-p5" aria-hidden="true"></i>
+    </div>
+    <div class="phase-body" id="body-p5">
+      <div class="task"><div class="task-dot" style="background:#712B13"></div><div><strong>Beta rollout</strong> — 3 clubs, 50 students. Collect feedback via in-app survey. Fix high-severity bugs before expanding.</div></div>
+      <div class="task"><div class="task-dot" style="background:#712B13"></div><div><strong>Security audit</strong> — Firebase security rules review, Postgres RLS policies, rate limiting on all API endpoints, QR code expiry enforcement, penetration test</div></div>
+      <div class="task"><div class="task-dot" style="background:#712B13"></div><div><strong>Accessibility audit</strong> — WCAG 2.1 AA, keyboard navigation, screen reader labels, colour contrast across all portals</div></div>
+      <div class="task"><div class="task-dot" style="background:#712B13"></div><div><strong>Performance</strong> — Lighthouse score > 90, image lazy loading, React code-splitting by route, Vite bundle analysis, Postgres slow-query log review</div></div>
+      <div class="task"><div class="task-dot" style="background:#712B13"></div><div><strong>Documentation</strong> — Organizer guide (how to create each post type), admin runbook, API docs via Swagger, onboarding flow for new clubs</div></div>
+      <div class="task"><div class="task-dot" style="background:#712B13"></div><div><strong>Full campus launch</strong> — All clubs onboarded, university-wide announcement, KPI tracking live: daily active users, RSVP rate, attendance rate, recommendation CTR</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<div class="pane" id="pane-firebase">
+  <div class="section-label">Why Firebase for auth</div>
+  <div class="g2" style="margin-bottom:12px">
+    <div class="card"><div class="card-title">🔥 Zero auth infrastructure</div><div class="card-desc">Firebase handles password hashing, session tokens, 2FA, OAuth flows, and account recovery. You write zero auth code — just call signInWithPopup and you're done.</div></div>
+    <div class="card"><div class="card-title">📱 Google SSO out of the box</div><div class="card-desc">Students use their university Google account. One tap, no new password to remember. Works with Google Workspace EDU accounts natively.</div></div>
+    <div class="card"><div class="card-title">🔒 Firestore security rules</div><div class="card-desc">Store role (student / organizer / admin) in a Firestore users doc. Rules enforce: organizers can only write their own posts, students can only read approved posts.</div></div>
+    <div class="card"><div class="card-title">📲 Firebase Cloud Messaging</div><div class="card-desc">Free push notifications to web (PWA) and native mobile. Sends "Event starting in 1 hour" and "Your certificate is ready" alerts without a separate notification service.</div></div>
+  </div>
+
+  <div class="section-label">Auth flow — all three roles</div>
+  <div class="flow-wrap" style="margin-bottom:8px">
+    <div class="fs">User opens app</div><div class="fa">→</div>
+    <div class="fs">Firebase login screen</div><div class="fa">→</div>
+    <div class="fs">Google SSO / Email</div><div class="fa">→</div>
+    <div class="fs">Firebase issues ID token</div><div class="fa">→</div>
+    <div class="fs">Node API verifies token</div><div class="fa">→</div>
+    <div class="fs">Lookup role in Postgres</div><div class="fa">→</div>
+    <div class="fs">Redirect to correct portal</div>
+  </div>
+
+  <div class="section-label">New organizer signup flow</div>
+  <div class="flow-wrap" style="margin-bottom:8px">
+    <div class="fs">Register with Google</div><div class="fa">→</div>
+    <div class="fs">Select "Organizer" role</div><div class="fa">→</div>
+    <div class="fs">Fill club/cell details</div><div class="fa">→</div>
+    <div class="fs">Upload verification docs</div><div class="fa">→</div>
+    <div class="fs">Status: Pending</div><div class="fa">→</div>
+    <div class="fs">Admin approves</div><div class="fa">→</div>
+    <div class="fs">Organizer portal unlocked</div>
+  </div>
+
+  <div class="section-label">Firebase services used</div>
+  <div class="g3">
+    <div class="card"><div class="card-ico">🔐</div><div class="card-title">Authentication</div><div class="card-desc">Google OAuth, Email/Password, Phone OTP. Manages sessions and token refresh automatically.</div><span class="pill" style="background:#EAF3DE;color:#27500A">Free tier</span></div>
+    <div class="card"><div class="card-ico">🔔</div><div class="card-title">Cloud Messaging (FCM)</div><div class="card-desc">Push notifications to PWA and mobile. Triggered by backend on RSVP, approvals, event reminders.</div><span class="pill" style="background:#EAF3DE;color:#27500A">Free tier</span></div>
+    <div class="card"><div class="card-ico">📦</div><div class="card-title">Storage (optional)</div><div class="card-desc">For post cover images and club logos. Can be swapped for MinIO if self-hosting is required by university policy.</div><span class="pill" style="background:#FAEEDA;color:#633806">Paid above 5GB</span></div>
+  </div>
+
+  <div class="section-label">What stays outside Firebase</div>
+  <div class="card"><div class="card-desc" style="line-height:1.8">All application data (posts, RSVPs, users, interactions, analytics) lives in <strong style="color:var(--color-text-primary)">PostgreSQL</strong> — not Firestore. Firebase is used <em>only</em> for authentication and push notifications. This keeps data portable, queryable with SQL, and avoids Firestore read/write costs at scale. The Node.js API uses the Firebase Admin SDK to verify ID tokens on every request.</div></div>
+</div>
+
+</div>
+<script>
+function sw(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pane-'+id).classList.add('on');
+  event.currentTarget.classList.add('on');
+}
+function ph(id){
+  const b=document.getElementById('body-'+id);
+  const c=document.getElementById('chev-'+id);
+  const open=b.classList.contains('open');
+  b.classList.toggle('open',!open);
+  c.classList.toggle('open',!open);
+}
+</script>

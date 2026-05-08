@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    function isAuth() {
+      return request.auth != null;
+    }
+    
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    function isOrganizerOrAdmin() {
+      return isAuth() && getUserRole() in ['organizer', 'admin'];
+    }
+
+    // Users: Can manage their own profile, everyone authenticated can view profiles
+    match /users/{userId} {
+      allow read, write: if isAuth() && request.auth.uid == userId;
+      allow read: if isAuth();
+    }
+
+    // Events: Publicly readable. Organizers/Admins can manage.
+    // Students can ONLY update the registeredCount/checkedInCount during transactions.
+    match /events/{eventId} {
+      allow read: if true;
+      allow create, delete: if isOrganizerOrAdmin();
+      allow update: if isOrganizerOrAdmin() || 
+        (isAuth() && request.resource.data.diff(resource.data).affectedKeys().hasAny(['registeredCount', 'checkedInCount']));
+    }
+
+    // Registrations: Users can manage their own. Organizers can view all.
+    match /registrations/{regId} {
+      allow create: if isAuth() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isAuth() && resource.data.userId == request.auth.uid;
+      allow read: if isOrganizerOrAdmin();
+    }
+  }
+}

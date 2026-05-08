@@ -1,0 +1,154 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["student", "organizer", "admin"] },
+        "avatar": { "type": "string" },
+        "major": { "type": "string" },
+        "year": { "type": "string" },
+        "bio": { "type": "string" },
+        "followers": { "type": "array", "items": { "type": "string" } },
+        "following": { "type": "array", "items": { "type": "string" } },
+        "interests": { "type": "array", "items": { "type": "string" } },
+        "badges": { "type": "array", "items": { "type": "string" } },
+        "attendanceStreak": { "type": "number" },
+        "bookmarkedEvents": { "type": "array", "items": { "type": "string" } },
+        "isApproved": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["pending", "active", "suspended", "review"] },
+        "orgName": { "type": "string" },
+        "orgDescription": { "type": "string" },
+        "orgWebsite": { "type": "string" },
+        "orgType": { "type": "string" },
+        "orgLogo": { "type": "string" },
+        "verificationDocuments": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["id", "name", "email", "role"]
+    },
+    "CampusEvent": {
+      "title": "Campus Event",
+      "description": "Details about a campus post or event",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "organizerEmail": { "type": "string" },
+        "organizerName": { "type": "string" },
+        "organizerId": { "type": "string" },
+        "category": { "type": "array", "items": { "type": "string" } },
+        "date": { "type": "string", "format": "date-time" },
+        "location": { "type": "string" },
+        "capacity": { "type": "number" },
+        "registeredCount": { "type": "number" },
+        "checkedInCount": { "type": "number" },
+        "imageUrl": { "type": "string" },
+        "assets": {
+          "type": "object",
+          "properties": {
+            "bannerUrl": { "type": "string" },
+            "logoUrl": { "type": "string" }
+          }
+        },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "coordinates": { 
+          "type": "object",
+          "properties": {
+            "lat": { "type": "number" },
+            "lng": { "type": "number" }
+          }
+        },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "likes": { "type": "array", "items": { "type": "string" } },
+        "commentCount": { "type": "number" },
+        "posterConfig": {
+          "type": "object",
+          "properties": {
+            "layout": { "type": "string", "enum": ["brutal", "minimal", "cyber", "kinetic"] },
+            "theme": { "type": "string", "enum": ["dark", "light", "vibrant", "mono"] },
+            "accentColor": { "type": "string" },
+            "showQr": { "type": "boolean" },
+            "showImage": { "type": "boolean" },
+            "overlayOpacity": { "type": "number" },
+            "fontFamily": { "type": "string", "enum": ["sans", "mono", "serif", "display"] }
+          }
+        }
+      },
+      "required": ["id", "title", "organizerEmail", "organizerName", "date", "location", "capacity"]
+    },
+    "EventComment": {
+      "title": "Event Comment",
+      "description": "User comment on a post",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "eventId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userAvatar": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "eventId", "userId", "userName", "userAvatar", "text", "createdAt"]
+    },
+    "Registration": {
+      "title": "Registration",
+      "description": "User registration for an event",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "eventId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "userName": { "type": "string" },
+        "organizerEmail": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "checkedIn": { "type": "boolean" },
+        "qrCode": { "type": "string" }
+      },
+      "required": ["id", "eventId", "userEmail", "userName", "organizerEmail", "timestamp", "checkedIn", "qrCode"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "User notification",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "read": { "type": "boolean" },
+        "eventId": { "type": "string" }
+      },
+      "required": ["id", "userId", "type", "title", "message", "timestamp", "read"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "events/{eventId}": {
+      "schema": "CampusEvent",
+      "description": "Campus events"
+    },
+    "registrations/{registrationId}": {
+      "schema": "Registration",
+      "description": "Event registrations"
+    },
+    "notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "User notifications"
+    },
+    "comments/{commentId}": {
+      "schema": "EventComment",
+      "description": "User comments on posts"
+    }
+  }
+}
