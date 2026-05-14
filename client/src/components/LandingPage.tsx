@@ -8,27 +8,22 @@ import { ArrowRight, Globe, Users, Zap, Shield, Sparkles, LayoutDashboard, Calen
 import { useAppContext } from '../contexts/AppContext';
 import { UserRole } from '../types';
 
-interface LandingPageProps {
-  onEnter: () => void;
-}
-
-export function LandingPage({ onEnter }: LandingPageProps) {
+export function LandingPage() {
   const { login, currentUser } = useAppContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleGoogleLogin = () => {
-    if (currentUser) { onEnter(); return; }
-    login(UserRole.STUDENT).then(() => onEnter());
+    if (currentUser) return;
+    login(UserRole.STUDENT);
   };
 
   const handleOrganizerLogin = () => {
     if (currentUser) {
       if (currentUser.role === UserRole.ORGANIZER && !currentUser.isApproved)
         toast.info("Your organizer account is pending approval.");
-      onEnter();
     } else {
-      login(UserRole.ORGANIZER).then(() => onEnter());
+      login(UserRole.ORGANIZER);
     }
   };
 
@@ -45,9 +40,9 @@ export function LandingPage({ onEnter }: LandingPageProps) {
               <span className="text-lg font-heading font-extrabold tracking-tight">CAMPUS<span className="text-primary">PULSE</span></span>
             </div>
             <div className="hidden md:flex items-center gap-6 text-sm font-bold text-background/60">
-              <a href="#features" className="text-primary border-b-2 border-primary pb-0.5">DISCOVERY</a>
-              <a href="#trending" className="hover:text-primary transition-colors">SOCIAL</a>
-              <a href="#management" className="hover:text-primary transition-colors">MAP</a>
+              <a href="#features" onClick={(e) => { e.preventDefault(); document.getElementById('features')?.scrollIntoView({behavior:'smooth'}) }} className="text-primary border-b-2 border-primary pb-0.5 transition-colors">DISCOVERY</a>
+              <a href="#trending" onClick={(e) => { e.preventDefault(); document.getElementById('trending')?.scrollIntoView({behavior:'smooth'}) }} className="hover:text-primary transition-colors">TRENDING</a>
+              <a href="#management" onClick={(e) => { e.preventDefault(); document.getElementById('management')?.scrollIntoView({behavior:'smooth'}) }} className="hover:text-primary transition-colors">PORTALS</a>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -109,11 +104,11 @@ export function LandingPage({ onEnter }: LandingPageProps) {
             <div className="flex items-center gap-3">
               <div className="flex -space-x-1">
                 {[
-                  { l: 'A', bg: 'bg-brutal-pink' },
-                  { l: 'B', bg: 'bg-brutal-blue' },
-                  { l: 'C', bg: 'bg-brutal-yellow' }
-                ].map(({l, bg}) => (
-                  <div key={l} className={`h-9 w-9 border-[2.5px] border-foreground ${bg} flex items-center justify-center text-foreground text-[10px] font-bold font-mono`}>{l}</div>
+                  { id: '1', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' },
+                  { id: '2', url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80' },
+                  { id: '3', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80' }
+                ].map(({id, url}) => (
+                  <img key={id} src={url} alt="Student" className="h-9 w-9 border-[2.5px] border-foreground object-cover bg-muted" />
                 ))}
                 <div className="h-9 w-9 border-[2.5px] border-foreground bg-foreground flex items-center justify-center text-background text-[9px] font-bold font-mono">+2k</div>
               </div>
@@ -262,7 +257,7 @@ export function LandingPage({ onEnter }: LandingPageProps) {
               <div className="h-14 w-14 border-[2.5px] border-foreground bg-destructive flex items-center justify-center mb-6 shadow-[2px_2px_0_0_var(--foreground)]"><Shield className="h-7 w-7 text-white" /></div>
               <h3 className="text-xl font-heading font-extrabold mb-3">System Administration</h3>
               <p className="text-muted-foreground text-sm mb-8 leading-relaxed">Global oversight, security configuration, and user role moderation. Only accessible via admin tokens.</p>
-              <Button onClick={() => login(UserRole.ADMIN).then(onEnter)} className="bg-foreground text-background hover:bg-foreground/90">Enter Admin Console</Button>
+              <Button onClick={() => login(UserRole.PLATFORM_ADMIN)} className="bg-foreground text-background hover:bg-foreground/90">Enter Admin Console</Button>
             </div>
           </div>
         </div>

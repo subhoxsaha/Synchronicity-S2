@@ -1,10 +1,37 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
-import firebaseConfig from '../../firebase-applet-config.json';
+import { toast } from 'sonner';
+
+// ── Environment-based Firebase config ──
+const requiredEnvVars = [
+  'VITE_FIREBASE_API_KEY',
+  'VITE_FIREBASE_AUTH_DOMAIN',
+  'VITE_FIREBASE_PROJECT_ID',
+  'VITE_FIREBASE_APP_ID',
+] as const;
+
+const missingVars = requiredEnvVars.filter(key => !(import.meta as any).env[key]);
+if (missingVars.length > 0) {
+  const msg = `[Firebase] Missing required env vars: ${missingVars.join(', ')}. Check your .env file.`;
+  console.error(msg);
+  // Don't throw — let the app mount so ErrorBoundary can catch downstream failures
+}
+
+const firebaseConfig = {
+  apiKey:            (import.meta as any).env.VITE_FIREBASE_API_KEY            || '',
+  authDomain:        (import.meta as any).env.VITE_FIREBASE_AUTH_DOMAIN        || '',
+  projectId:         (import.meta as any).env.VITE_FIREBASE_PROJECT_ID         || '',
+  appId:             (import.meta as any).env.VITE_FIREBASE_APP_ID             || '',
+  storageBucket:     (import.meta as any).env.VITE_FIREBASE_STORAGE_BUCKET     || '',
+  messagingSenderId: (import.meta as any).env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+  measurementId:     (import.meta as any).env.VITE_FIREBASE_MEASUREMENT_ID     || '',
+};
+
+const firestoreDatabaseId = (import.meta as any).env.VITE_FIREBASE_FIRESTORE_DB_ID || '(default)';
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = getFirestore(app, firestoreDatabaseId);
 export const auth = getAuth(app);
 
 async function testConnection() {
@@ -85,5 +112,10 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   console.error('User:', auth.currentUser?.email || 'Anonymous/Not logged in');
   console.error('Full Info:', errInfo);
   console.groupEnd();
-  throw new Error(JSON.stringify(errInfo));
+
+  if (isPermissionDenied) {
+    toast.error("Permission denied. You do not have access to this resource.");
+  } else {
+    toast.error("An unexpected database error occurred.");
+  }
 }

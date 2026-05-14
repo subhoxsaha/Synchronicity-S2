@@ -49,7 +49,7 @@ export function StoryReel({ events }: StoryReelProps) {
                 }`}>
                   <Avatar className="h-14 w-14 md:h-16 md:w-16 rounded-none">
                     <AvatarImage src={user.avatar} className="object-cover" />
-                    <AvatarFallback className="font-black text-xs bg-card text-foreground uppercase tracking-widest">{user.name[0]}</AvatarFallback>
+                    <AvatarFallback className="font-black text-xs bg-card text-foreground uppercase tracking-widest">{(user.name || '?')[0]}</AvatarFallback>
                   </Avatar>
                 </div>
                 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'motion/react';
 import { Home, Globe, Ticket, Bookmark, User, Plus, LayoutDashboard, ShieldCheck } from 'lucide-react';
 import { UserRole } from '../types';
 
@@ -20,9 +19,7 @@ const TABS = [
 ];
 
 export function BottomNav({ activeTab, onTabChange, role, isApproved, onCreatePost }: BottomNavProps) {
-  const showManage = role === UserRole.ADMIN || (role === UserRole.ORGANIZER && isApproved);
-
-  const effectiveTab = activeTab === 'home' ? 'home' : activeTab;
+  const showManage = role === UserRole.PLATFORM_ADMIN || (role === UserRole.ORGANIZER && isApproved);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
@@ -32,16 +29,15 @@ export function BottomNav({ activeTab, onTabChange, role, isApproved, onCreatePo
 
           // Discover tab
           if (tab.id === 'discover') {
-            const isActive = activeTab === 'map';
+            const isActive = activeTab === 'discover';
             return (
               <button
                 key={tab.id}
-                onClick={() => onTabChange('map')}
-                className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-colors duration-100 border-r border-background/10 last:border-r-0 ${
-                  isActive
+                onClick={() => onTabChange('discover')}
+                className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-colors duration-100 border-r border-background/10 last:border-r-0 ${isActive
                     ? 'bg-primary text-primary-foreground'
                     : 'text-background/40 hover:text-background/70 hover:bg-background/5'
-                }`}
+                  }`}
               >
                 <Icon className="h-5 w-5" />
                 <span className="text-[8px] font-bold font-mono uppercase tracking-wider">{tab.label}</span>
@@ -56,13 +52,12 @@ export function BottomNav({ activeTab, onTabChange, role, isApproved, onCreatePo
               <button
                 key="manage"
                 onClick={() => onTabChange('manage')}
-                className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-colors duration-100 border-r border-background/10 last:border-r-0 ${
-                  isActive
+                className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-colors duration-100 border-r border-background/10 last:border-r-0 ${isActive
                     ? 'bg-primary text-primary-foreground'
                     : 'text-background/40 hover:text-background/70 hover:bg-background/5'
-                }`}
+                  }`}
               >
-                {role === UserRole.ADMIN
+                {role === UserRole.PLATFORM_ADMIN
                   ? <ShieldCheck className="h-5 w-5" />
                   : <LayoutDashboard className="h-5 w-5" />
                 }
@@ -71,16 +66,15 @@ export function BottomNav({ activeTab, onTabChange, role, isApproved, onCreatePo
             );
           }
 
-          const isActive = effectiveTab === tab.id;
+          const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-colors duration-100 border-r border-background/10 last:border-r-0 ${
-                isActive
+              className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-colors duration-100 border-r border-background/10 last:border-r-0 ${isActive
                   ? 'bg-primary text-primary-foreground'
                   : 'text-background/40 hover:text-background/70 hover:bg-background/5'
-              }`}
+                }`}
             >
               <Icon className="h-5 w-5" />
               <span className="text-[8px] font-bold font-mono uppercase tracking-wider">{tab.label}</span>

@@ -1,7 +1,15 @@
 node_modules/
 build/
+dist/
 coverage/
 .DS_Store
 *.log
 .env*
 !.env.example
+
+# AI Tools & Artifacts
+.agents/
+skills-lock.json
+analysis_results.md
+firebase-blueprint.json
+security_spec.md

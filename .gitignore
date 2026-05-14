@@ -11,7 +11,19 @@ coverage
 out/
 
 # production
-build
+build/
+dist/
+client/dist/
+
+# Sub-repositories
+server/
+
+# AI & Local Artifacts
+.agents/
+skills-lock.json
+analysis_results.md
+security_spec.md
+firebase-blueprint.json
 
 # misc
 .DS_Store

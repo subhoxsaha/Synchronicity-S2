@@ -4,19 +4,14 @@
  */
 
 import { CampusEvent, User, Recommendation } from "../types";
-// import { GoogleGenAI, Type } from "@google/genai";
-
-// const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const BACKEND_URL = (import.meta as any).env.VITE_AI_BACKEND_URL || 'http://localhost:5000';
 
 export async function generateEventDescription(title: string, briefPrompt: string): Promise<string> {
   try {
-    // const response = await ai.models.generateContent({
-    //   model: "gemini-3-flash-preview",
-    //   contents: `Generate a catchy and informative campus event description for an event titled "${title}". Brief intro: ${briefPrompt}. Keep it under 150 words and engaging for students.`,
-    // });
-    // return response.text || "No description generated.";
-    console.log(`Mock generating description for ${title} with prompt ${briefPrompt}`);
-    return "This is a mock event description. The Gemini API is currently disabled.";
+    // In a real implementation, we would also have an endpoint for this,
+    // but for now we'll route it through a generic chat if needed or mock it.
+    // Assuming backend will handle it or we mock it for now since the user wanted the CHAT to work:
+    return "Event descriptions are temporarily disabled while moving to the new AI backend.";
   } catch (error) {
     console.error("Gemini Error:", error);
     return "Error generating description. Please write manually.";
@@ -25,13 +20,7 @@ export async function generateEventDescription(title: string, briefPrompt: strin
 
 export async function generateEventTags(title: string, description: string): Promise<string[]> {
   try {
-    // const response = await ai.models.generateContent({
-    //   model: "gemini-3-flash-preview",
-    //   contents: `Based on the event title "${title}" and description: "${description}", generate 3-5 relevant short tags (single words or short phrases). Return as comma separated values.`,
-    // });
-    // return response.text?.split(',').map(tag => tag.trim()) || [];
-    console.log(`Mock generating tags for ${title}`);
-    return ["mock", "tags", "disabled"];
+    return ["campus", "event"];
   } catch (error) {
     console.error("Gemini Error:", error);
     return [];
@@ -47,43 +36,15 @@ export async function getEventRecommendations(user: User, availableEvents: Campu
   }));
 
   try {
-    // const response = await ai.models.generateContent({
-    //   model: "gemini-3-flash-preview",
-    //   contents: `You are an AI campus event recommender.
-// User Profile:
-// - Major: ${user.major}
-// - Interests: ${user.interests?.join(', ')}
-// - Roles: ${user.role}
-// 
-// Available Events:
-// ${JSON.stringify(eventsContext)}
-// 
-// Analyze the user interests and major to recommend the best events.
-// Return a JSON array of recommendations.`,
-    //   config: {
-    //     responseMimeType: "application/json",
-    //     responseSchema: {
-    //       type: Type.ARRAY,
-    //       items: {
-    //         type: Type.OBJECT,
-    //         properties: {
-    //           eventId: { type: Type.STRING },
-    //           score: { type: Type.NUMBER, description: "Score from 0 to 1" },
-    //           reason: { type: Type.STRING, description: "One sentence why this fits the user" }
-    //         },
-    //         required: ["eventId", "score", "reason"]
-    //       }
-    //     }
-    //   }
-    // });
-    // 
-    // return JSON.parse(response.text) as Recommendation[];
-    console.log(`Mock generating recommendations for ${user.id}`);
-    return availableEvents.slice(0, 3).map(e => ({
-      eventId: e.id,
-      score: 0.5,
-      reason: "Popular on campus right now (Mock recommendation)!"
-    }));
+    const res = await fetch(`${BACKEND_URL}/api/nexus/recommend`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user, events: eventsContext })
+    });
+    
+    if (!res.ok) throw new Error('Backend error');
+    const data = await res.json();
+    return data as Recommendation[];
   } catch (error) {
     console.error("Gemini Error:", error);
     // Simple fallback if AI fails
@@ -92,5 +53,32 @@ export async function getEventRecommendations(user: User, availableEvents: Campu
       score: 0.5,
       reason: "Popular on campus right now!"
     }));
+  }
+}
+
+export async function chatWithCampusAI(userMessage: string, availableEvents: CampusEvent[], history: any[] = []): Promise<string> {
+  // Compress context to absolutely minimize token usage
+  const minimalContext = availableEvents
+    .slice(0, 20) // Only send the top 20 most relevant/recent events to save tokens
+    .map(e => `[${e.id}] ${e.title} (${e.category}) - ${new Date(e.date).toLocaleDateString()}`)
+    .join(' | ');
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/nexus/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        message: userMessage, 
+        history: history,
+        context: minimalContext 
+      })
+    });
+
+    if (!res.ok) throw new Error('Backend chat error');
+    const data = await res.json();
+    return data.text || "I couldn't process that.";
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    return "I'm having trouble connecting right now. Please try again later.";
   }
 }

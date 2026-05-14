@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { SlidersHorizontal, RotateCcw } from 'lucide-react';
+import { SlidersHorizontal, RotateCcw, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 
 const POST_TYPES = ['Event', 'Announcement', 'Recruitment', 'Gallery', 'Resource'] as const;
 const DEPARTMENTS = ['Any Department', 'Computer Science', 'Electronics', 'Mechanical', 'Civil', 'Business Admin'] as const;
 
-export function FilterDrawer() {
+interface FilterDrawerProps {
+  onApply: (filters: { types: string[], department: string, freeOnly: boolean, hasRsvp: boolean }) => void;
+}
+
+export function FilterDrawer({ onApply }: FilterDrawerProps) {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [department, setDepartment] = useState('Any Department');
   const [freeOnly, setFreeOnly] = useState(false);
   const [hasRsvp, setHasRsvp] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const activeCount = selectedTypes.length + (department !== 'Any Department' ? 1 : 0) + (freeOnly ? 1 : 0) + (hasRsvp ? 1 : 0);
 
@@ -28,123 +32,142 @@ export function FilterDrawer() {
     setHasRsvp(false);
   };
 
+  const handleApply = () => {
+    onApply({
+      types: selectedTypes,
+      department,
+      freeOnly,
+      hasRsvp
+    });
+    setIsOpen(false);
+  };
+
   return (
-    <Sheet>
-      <SheetTrigger>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="h-12 w-12 md:h-14 md:w-14 rounded-2xl border-border/40 bg-card/50 hover:bg-card relative shrink-0"
-        >
-          <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
-          {activeCount > 0 && (
-            <span className="absolute -top-1 -right-1 h-5 w-5 bg-primary text-primary-foreground text-[9px] font-black rounded-full flex items-center justify-center shadow-lg shadow-primary/30">
-              {activeCount}
-            </span>
-          )}
-        </Button>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger
+        render={
+          <Button 
+            variant="outline" 
+            className="h-10 w-10 p-0 sm:w-auto sm:px-4 md:h-12 md:px-5 rounded-none border-[2.5px] border-foreground bg-brutal-yellow hover:bg-brutal-yellow/90 shadow-[4px_4px_0_0_var(--foreground)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all relative shrink-0 uppercase font-black tracking-widest flex items-center justify-center"
+          />
+        }
+      >
+        <SlidersHorizontal className="h-4 w-4 sm:mr-2" />
+        <span className="hidden sm:inline">Filters</span>
+        {activeCount > 0 && (
+          <span className="absolute -top-2 -right-2 h-6 w-6 bg-foreground text-background text-[10px] font-black rounded-none flex items-center justify-center border-[2px] border-background z-10">
+            {activeCount}
+          </span>
+        )}
       </SheetTrigger>
-      <SheetContent side="bottom" className="h-[75vh] rounded-t-[2rem] bg-background border-t border-border/40 backdrop-blur-3xl overflow-y-auto">
-        <SheetHeader className="pb-6 border-b border-border/20">
-          <div className="flex items-center justify-between">
-            <SheetTitle className="text-2xl font-black uppercase tracking-tight">Filters</SheetTitle>
-            {activeCount > 0 && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={resetAll}
-                className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-destructive"
-              >
-                <RotateCcw className="h-3 w-3 mr-1.5" />
-                Reset All
-              </Button>
-            )}
-          </div>
-        </SheetHeader>
-        
-        <div className="py-8 space-y-8">
-          {/* Post Type Multi-select */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60">Post Type</h4>
-            <div className="flex flex-wrap gap-2">
-              {POST_TYPES.map(type => {
-                const isActive = selectedTypes.includes(type);
-                return (
-                  <Badge 
-                    key={type} 
-                    variant="outline" 
-                    onClick={() => toggleType(type)}
-                    className={`px-4 py-2.5 rounded-xl cursor-pointer uppercase tracking-widest text-[10px] font-black transition-all duration-200 ${
-                      isActive 
-                        ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20'
-                        : 'border-border/40 bg-card/30 text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-card/50'
-                    }`}
-                  >
-                    {type}
-                  </Badge>
-                );
-              })}
+      <SheetContent side="right" className="w-full sm:w-[400px] rounded-none border-l-[3px] border-foreground bg-background p-0 overflow-y-auto">
+        <div className="p-4 sm:p-5 h-full flex flex-col">
+          <SheetHeader className="pb-3 sm:pb-4 border-b-[3px] border-foreground mb-4">
+            <div className="flex items-center justify-between">
+              <SheetTitle className="text-xl sm:text-2xl font-black uppercase tracking-tighter">Filters</SheetTitle>
+              {activeCount > 0 && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={resetAll}
+                  className="rounded-none border-[2px] border-foreground text-[10px] font-black uppercase tracking-widest hover:bg-destructive hover:text-destructive-foreground shadow-[2px_2px_0_0_var(--foreground)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all h-8"
+                >
+                  <RotateCcw className="h-3 w-3 sm:mr-1.5" />
+                  <span className="hidden sm:inline">Reset</span>
+                </Button>
+              )}
+            </div>
+          </SheetHeader>
+          
+          <div className="flex-1 space-y-5">
+            {/* Post Type Multi-select */}
+            <div className="space-y-2.5">
+              <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Post Type</h4>
+              <div className="flex flex-wrap gap-2">
+                {POST_TYPES.map(type => {
+                  const isActive = selectedTypes.includes(type);
+                  return (
+                    <button
+                      key={type} 
+                      onClick={() => toggleType(type)}
+                      className={`px-3 py-2 border-[2.5px] border-foreground uppercase tracking-widest text-[10px] font-black transition-all ${
+                        isActive 
+                          ? 'bg-brutal-blue text-foreground shadow-[3px_3px_0_0_var(--foreground)] translate-x-[-2px] translate-y-[-2px]'
+                          : 'bg-background text-foreground hover:bg-muted shadow-[2px_2px_0_0_var(--foreground)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                      }`}
+                    >
+                      {type}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Department Dropdown */}
+            <div className="space-y-2.5">
+              <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Department</h4>
+              <div className="relative">
+                <select 
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  className="w-full bg-background border-[2.5px] border-foreground rounded-none h-12 px-4 text-xs font-black outline-none focus:ring-0 focus:border-foreground uppercase tracking-widest appearance-none cursor-pointer shadow-[4px_4px_0_0_var(--foreground)]"
+                >
+                  {DEPARTMENTS.map(dept => (
+                    <option key={dept} className="bg-background font-bold">{dept}</option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-foreground"></div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Toggle Switches */}
+            <div className="space-y-2.5">
+              <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Options</h4>
+              <div className="flex flex-col gap-2.5">
+                <button 
+                  onClick={() => setFreeOnly(!freeOnly)}
+                  className={`w-full border-[2.5px] border-foreground p-3 flex items-center justify-between cursor-pointer transition-all ${
+                    freeOnly 
+                      ? 'bg-brutal-green shadow-[4px_4px_0_0_var(--foreground)] translate-x-[-2px] translate-y-[-2px]' 
+                      : 'bg-background hover:bg-muted shadow-[2px_2px_0_0_var(--foreground)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                  }`}
+                >
+                  <span className="text-xs font-black uppercase tracking-widest">Free Only</span>
+                  <div className={`w-5 h-5 border-[2px] border-foreground flex items-center justify-center bg-background`}>
+                    {freeOnly && <Check className="h-4 w-4 text-foreground" strokeWidth={4} />}
+                  </div>
+                </button>
+                <button 
+                  onClick={() => setHasRsvp(!hasRsvp)}
+                  className={`w-full border-[2.5px] border-foreground p-3 flex items-center justify-between cursor-pointer transition-all ${
+                    hasRsvp 
+                      ? 'bg-brutal-pink shadow-[4px_4px_0_0_var(--foreground)] translate-x-[-2px] translate-y-[-2px]' 
+                      : 'bg-background hover:bg-muted shadow-[2px_2px_0_0_var(--foreground)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                  }`}
+                >
+                  <span className="text-xs font-black uppercase tracking-widest">Has RSVP</span>
+                  <div className={`w-5 h-5 border-[2px] border-foreground flex items-center justify-center bg-background`}>
+                    {hasRsvp && <Check className="h-4 w-4 text-foreground" strokeWidth={4} />}
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Department Dropdown */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60">Department</h4>
-            <select 
-              value={department}
-              onChange={(e) => setDepartment(e.target.value)}
-              className="w-full bg-card/30 border border-border/40 rounded-2xl h-12 px-4 text-xs font-bold outline-none focus:border-primary/50 focus:bg-card/50 uppercase tracking-widest appearance-none cursor-pointer transition-all"
-            >
-              {DEPARTMENTS.map(dept => (
-                <option key={dept} className="bg-background">{dept}</option>
-              ))}
-            </select>
-          </div>
-          
-          {/* Toggle Switches */}
-          <div className="flex gap-4">
-            <button 
-              onClick={() => setFreeOnly(!freeOnly)}
-              className={`flex-1 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200 border ${
-                freeOnly 
-                  ? 'bg-primary/10 border-primary/30 shadow-inner' 
-                  : 'bg-card/30 border-border/40 hover:bg-card/50'
-              }`}
-            >
-              <span className={`text-xs font-black uppercase tracking-widest transition-colors ${freeOnly ? 'text-primary' : 'text-muted-foreground'}`}>Free Only</span>
-              <div className={`w-10 h-5 rounded-full relative transition-colors ${freeOnly ? 'bg-primary' : 'bg-border/60'}`}>
-                <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all duration-200 ${
-                  freeOnly 
-                    ? 'right-0.5 bg-primary-foreground shadow-lg' 
-                    : 'left-0.5 bg-muted-foreground/40'
-                }`} />
-              </div>
-            </button>
-            <button 
-              onClick={() => setHasRsvp(!hasRsvp)}
-              className={`flex-1 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200 border ${
-                hasRsvp 
-                  ? 'bg-secondary/10 border-secondary/30 shadow-inner' 
-                  : 'bg-card/30 border-border/40 hover:bg-card/50'
-              }`}
-            >
-              <span className={`text-xs font-black uppercase tracking-widest transition-colors ${hasRsvp ? 'text-secondary' : 'text-muted-foreground'}`}>Has RSVP</span>
-              <div className={`w-10 h-5 rounded-full relative transition-colors ${hasRsvp ? 'bg-secondary' : 'bg-border/60'}`}>
-                <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all duration-200 ${
-                  hasRsvp 
-                    ? 'right-0.5 bg-secondary-foreground shadow-lg' 
-                    : 'left-0.5 bg-muted-foreground/40'
-                }`} />
-              </div>
-            </button>
-          </div>
-
           {/* Apply Button */}
-          <Button className="w-full h-14 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 mt-4">
-            Apply Filters {activeCount > 0 && `(${activeCount})`}
-          </Button>
+          <div className="pt-4 border-t-[3px] border-foreground mt-auto">
+            <Button 
+              onClick={handleApply}
+              className="w-full h-12 rounded-none border-[3px] border-foreground bg-brutal-yellow hover:bg-brutal-yellow/90 text-foreground text-sm font-black uppercase tracking-widest shadow-[4px_4px_0_0_var(--foreground)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+            >
+              Apply Filters {activeCount > 0 && `(${activeCount})`}
+            </Button>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
   );
 }
+

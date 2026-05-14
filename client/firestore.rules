@@ -13,7 +13,7 @@ service cloud.firestore {
 
     function isEmailVerified() {
       return isSignedIn() && (
-        isAdmin() || 
+        isPlatformAdmin() || 
         request.auth.token.email_verified == true
       );
     }
@@ -30,25 +30,33 @@ service cloud.firestore {
       return resource.data;
     }
 
-    // Admin check: strictly based on email whitelist for bootstrapped admins
-    function isAdmin() {
+    // Platform admin check  
+    function isPlatformAdmin() {
       return isSignedIn() && (
         request.auth.token.email == 'subhoxsaha@gmail.com' ||
         request.auth.token.email == 'ashimasaha87759@gmail.com' ||
-        request.auth.token.email == 'subhrajit.saha.work@gmail.com'
+        request.auth.token.email == 'subhrajit.saha.work@gmail.com' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'platform_admin'
       );
+    }
+
+    // Ambassador check
+    function isAmbassador(instituteId) {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'ambassador' &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('instituteId', '') == instituteId;
     }
 
     function isOrganizer() {
       return isEmailVerified() && (
-        isAdmin() || 
+        isPlatformAdmin() || 
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'student') == 'organizer'
       );
     }
 
     function isApprovedOrganizer() {
       return isOrganizer() && (
-        isAdmin() ||
+        isPlatformAdmin() ||
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('isApproved', false) == true
       );
     }
@@ -64,10 +72,11 @@ service cloud.firestore {
     // --- Validation Blueprints ---
 
     function isValidUser(data) {
-      return data.keys().hasAll(['id', 'name', 'email', 'role', 'status']) &&
+      return data.keys().hasAll(['id', 'name', 'email', 'role']) &&
              data.id is string && data.name is string && data.email is string &&
              data.get('followers', []) is list && data.get('following', []) is list &&
              data.get('isApproved', false) is bool &&
+             data.get('onboardingComplete', false) is bool &&
              data.get('orgName', '') is string &&
              data.get('orgDescription', '') is string &&
              data.get('orgWebsite', '') is string &&
@@ -128,7 +137,7 @@ service cloud.firestore {
       // allow read if signed in (social discovery)
       allow get, list: if isSignedIn();
       allow create: if isOwner(userId) && isValidUser(incoming());
-      allow update: if isAdmin() || (
+      allow update: if isPlatformAdmin() || (
         isValidUser(incoming()) && (
           // Action: Profile Update (Owner only)
           (isOwner(userId) && isImmutable('id') && isImmutable('email') && isImmutable('role')) ||
@@ -156,7 +165,7 @@ service cloud.firestore {
                        isValidId(eventId) &&
                        incoming().organizerId == request.auth.uid &&
                        incoming().organizerEmail == request.auth.token.email;
-      allow update: if isAdmin() || (
+      allow update: if isPlatformAdmin() || (
         // Action: Organizer Details Update
         (isApprovedOrganizer() && isValidEvent(incoming()) && 
          existing().organizerId == request.auth.uid &&
@@ -193,7 +202,7 @@ service cloud.firestore {
          incoming().diff(existing()).affectedKeys().hasOnly(['checkedInCount']) &&
          incoming().checkedInCount == (existing().get('checkedInCount', 0) + 1))
       );
-      allow delete: if isAdmin() || (isOrganizer() && existing().organizerId == request.auth.uid);
+      allow delete: if isPlatformAdmin() || (isOrganizer() && existing().organizerId == request.auth.uid);
     }
 
     match /comments/{commentId} {
@@ -202,17 +211,17 @@ service cloud.firestore {
                        isValidComment(incoming()) &&
                        incoming().userId == request.auth.uid &&
                        existsAfter(/databases/$(database)/documents/events/$(incoming().eventId));
-      allow delete: if isAdmin() || (isSignedIn() && existing().userId == request.auth.uid);
+      allow delete: if isPlatformAdmin() || (isSignedIn() && existing().userId == request.auth.uid);
     }
 
     match /registrations/{registrationId} {
       allow get: if isSignedIn() && (
         existing().userEmail == request.auth.token.email ||
         existing().organizerEmail == request.auth.token.email ||
-        isAdmin()
+        isPlatformAdmin()
       );
       allow list: if isSignedIn() && (
-        isAdmin() ||
+        isPlatformAdmin() ||
         resource.data.userEmail == request.auth.token.email ||
         resource.data.organizerEmail == request.auth.token.email
       );
@@ -222,7 +231,7 @@ service cloud.firestore {
                        incoming().userEmail == request.auth.token.email &&
                        incoming().checkedIn == false &&
                        existsAfter(/databases/$(database)/documents/events/$(incoming().eventId));
-      allow update: if (isAdmin()) || (
+      allow update: if (isPlatformAdmin()) || (
         isEmailVerified() &&
         isValidRegistration(incoming()) && 
         isImmutable('id') && isImmutable('eventId') && isImmutable('userEmail') &&
@@ -235,7 +244,7 @@ service cloud.firestore {
            existsAfter(/databases/$(database)/documents/events/$(existing().eventId)))
         )
       );
-      allow delete: if isAdmin() || (isSignedIn() && existing().userEmail == request.auth.token.email);
+      allow delete: if isPlatformAdmin() || (isSignedIn() && existing().userEmail == request.auth.token.email);
     }
 
     match /notifications/{notificationId} {
@@ -245,6 +254,30 @@ service cloud.firestore {
                        existing().userId == request.auth.uid &&
                        incoming().diff(existing()).affectedKeys().hasOnly(['read']);
       allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+
+    match /institutes/{instituteId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+
+    match /organizations/{orgId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    match /instituteRequests/{requestId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() &&
+                       incoming().requesterId == request.auth.uid &&
+                       incoming().status == 'pending';
+      allow update: if isPlatformAdmin();
+      allow delete: if isPlatformAdmin();
     }
   }
 }

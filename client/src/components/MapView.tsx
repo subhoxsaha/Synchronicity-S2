@@ -24,9 +24,12 @@ export function MapView({ events, onEventClick }: MapViewProps) {
   const recenter = () => {
     if (events.length === 0) return;
     
+    const validEvents = events.filter(e => e.coordinates);
+    if (validEvents.length === 0) return;
+    
     // Average coordinates
-    const lat = events.reduce((acc, e) => acc + e.coordinates.lat, 0) / events.length;
-    const lng = events.reduce((acc, e) => acc + e.coordinates.lng, 0) / events.length;
+    const lat = validEvents.reduce((acc, e) => acc + e.coordinates.lat, 0) / validEvents.length;
+    const lng = validEvents.reduce((acc, e) => acc + e.coordinates.lng, 0) / validEvents.length;
 
     mapRef.current?.flyTo({
       center: [lng, lat],
@@ -37,11 +40,13 @@ export function MapView({ events, onEventClick }: MapViewProps) {
 
   const handleEventClick = (event: CampusEvent) => {
     setSelectedEvent(event);
-    mapRef.current?.flyTo({
-      center: [event.coordinates.lng, event.coordinates.lat],
-      zoom: 15,
-      duration: 800
-    });
+    if (event.coordinates) {
+      mapRef.current?.flyTo({
+        center: [event.coordinates.lng, event.coordinates.lat],
+        zoom: 15,
+        duration: 800
+      });
+    }
   };
 
   useEffect(() => {
@@ -105,7 +110,7 @@ export function MapView({ events, onEventClick }: MapViewProps) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[8px] font-black text-primary/80 uppercase tracking-[0.2em] font-mono">{event.id.slice(0, 10)}</span>
-                    <Badge variant="outline" className="text-[7px] border-white/10 text-white/40 h-4 px-1.5">{event.category?.[0]}</Badge>
+                    <Badge variant="outline" className="text-[7px] border-white/10 text-white/40 h-4 px-1.5">{event.category?.[0] || 'General'}</Badge>
                   </div>
                   <h4 className="text-[13px] font-black truncate leading-tight text-white uppercase tracking-tight group-hover/item:text-primary transition-colors">{event.title}</h4>
                   <div className="flex items-center gap-2 text-[9px] font-bold text-white/30 uppercase mt-2.5">
@@ -150,7 +155,7 @@ export function MapView({ events, onEventClick }: MapViewProps) {
         >
           <MapControls />
           
-          {events.map((event) => (
+          {events.filter(e => e.coordinates).map((event) => (
             <Marker
               key={event.id}
               latitude={event.coordinates.lat}
@@ -209,7 +214,7 @@ export function MapView({ events, onEventClick }: MapViewProps) {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent" />
                   <Badge className="absolute top-4 left-4 bg-primary text-white border-none text-[8px] font-black uppercase px-3 py-1 rounded-lg">
-                    {selectedEvent.category[0]}
+                    {selectedEvent.category?.[0] || 'General'}
                   </Badge>
                 </div>
                 

@@ -1,4 +1,4 @@
-import { CampusEvent, EventCategory, User, UserRole, Registration, EventStatus } from '../types';
+import { CampusEvent, EventCategory, User, UserRole, Registration, EventStatus, PostType } from '../types';
 
 export const MOCK_USERS: User[] = [
   {
@@ -24,7 +24,7 @@ export const MOCK_USERS: User[] = [
     id: 'u3',
     name: 'Dean Admin',
     email: 'dean@college.edu',
-    role: UserRole.ADMIN,
+    role: UserRole.PLATFORM_ADMIN,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dean',
   }
 ];
@@ -32,6 +32,7 @@ export const MOCK_USERS: User[] = [
 export const MOCK_EVENTS: CampusEvent[] = [
   {
     id: 'e1',
+    type: PostType.EVENT,
     title: 'Code & Coffee: React Native Workshop',
     description: 'Learn how to build cross-platform mobile apps with React Native. Free coffee provided!',
     organizerEmail: 'sarah@college.edu',
@@ -50,9 +51,11 @@ export const MOCK_EVENTS: CampusEvent[] = [
     tags: ['coding', 'mobile', 'react'],
     coordinates: { lat: 37.4285, lng: -122.1747 },
     status: EventStatus.APPROVED,
+    createdAt: new Date().toISOString(),
   },
   {
     id: 'e2',
+    type: PostType.EVENT,
     title: 'Spring Music Festival',
     description: 'A night of live music featuring local campus bands and special guests.',
     organizerEmail: 'sarah@college.edu',
@@ -71,9 +74,11 @@ export const MOCK_EVENTS: CampusEvent[] = [
     tags: ['music', 'festival', 'spring'],
     coordinates: { lat: 37.4275, lng: -122.1697 },
     status: EventStatus.APPROVED,
+    createdAt: new Date().toISOString(),
   },
   {
     id: 'e3',
+    type: PostType.EVENT,
     title: 'Hackathon Prep: Algorithms 101',
     description: 'Get ready for the annual hackathon with this intensive algorithm review session.',
     organizerEmail: 'sarah@college.edu',
@@ -92,9 +97,11 @@ export const MOCK_EVENTS: CampusEvent[] = [
     tags: ['hackathon', 'algorithms', 'prep'],
     coordinates: { lat: 37.4295, lng: -122.1717 },
     status: EventStatus.APPROVED,
+    createdAt: new Date().toISOString(),
   },
   {
     id: 'e4',
+    type: PostType.EVENT,
     title: 'UX Design Workshop',
     description: 'Introduction to User Experience design principles and tools.',
     organizerEmail: 'sarah@college.edu',
@@ -113,6 +120,7 @@ export const MOCK_EVENTS: CampusEvent[] = [
     tags: ['ux', 'design', 'ui'],
     coordinates: { lat: 37.4265, lng: -122.1727 },
     status: EventStatus.APPROVED,
+    createdAt: new Date().toISOString(),
   }
 ];
 

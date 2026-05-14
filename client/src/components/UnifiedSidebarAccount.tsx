@@ -30,13 +30,13 @@ export default function UnifiedSidebarAccount() {
   const roles = [
     { id: UserRole.STUDENT, label: 'Student', icon: <Users className="h-3.5 w-3.5" />, color: 'bg-primary' },
     { id: UserRole.ORGANIZER, label: 'Organizer', icon: <Briefcase className="h-3.5 w-3.5" />, color: 'bg-secondary' },
-    { id: UserRole.ADMIN, label: 'Admin', icon: <ShieldCheck className="h-3.5 w-3.5" />, color: 'bg-destructive' },
+    { id: UserRole.PLATFORM_ADMIN, label: 'Admin', icon: <ShieldCheck className="h-3.5 w-3.5" />, color: 'bg-destructive' },
   ];
 
   return (
     <div className="relative group/account">
       {/* Admin Toggle Bar (Horizontal above the profile div) */}
-      {currentUser.role === UserRole.ADMIN && (
+      {currentUser.role === UserRole.PLATFORM_ADMIN && (
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -74,7 +74,7 @@ export default function UnifiedSidebarAccount() {
           <Avatar className="h-11 w-11 border-2 border-background shadow-xl group-hover:scale-105 transition-transform">
             <AvatarImage src={currentUser.avatar} />
             <AvatarFallback className="font-black bg-primary/10 text-primary uppercase">
-              {currentUser.name[0]}
+              {(currentUser.name || '?')[0]}
             </AvatarFallback>
           </Avatar>
           <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-green-500 border-2 border-background rounded-full shadow-sm" />
@@ -86,7 +86,7 @@ export default function UnifiedSidebarAccount() {
           </p>
           <div className="flex items-center gap-1.5">
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-70">
-              {activeRole === UserRole.ADMIN ? 'System Root' : activeRole === UserRole.ORGANIZER ? 'Club Lead' : 'Campus Member'}
+              {activeRole === UserRole.PLATFORM_ADMIN ? 'System Root' : activeRole === UserRole.ORGANIZER ? 'Club Lead' : 'Campus Member'}
             </p>
           </div>
         </div>
