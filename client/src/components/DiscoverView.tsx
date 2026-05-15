@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { Home, Settings, Users, Trophy, MapPin, Building2, UserPlus, Globe, ChevronRight, ShieldCheck, Search } from 'lucide-react';
 import { EventCategory, CampusEvent, PostType, Organization, OrgStatus, AnyPost } from '../types';
 import { EventCard } from './EventCard';
@@ -24,6 +25,7 @@ interface DiscoverViewProps {
 type DiscoverTab = 'feed' | 'organizations';
 
 export function DiscoverView({ events, registeredEventIds, registerForEvent, defaultTab = 'feed', hideTabs = false, showMapInitial = false }: DiscoverViewProps) {
+  const navigate = useNavigate();
   const { organizations, currentUser, joinOrganization, followOrganization, unfollowOrganization } = useAppContext();
   const [selectedVibe, setSelectedVibe] = useState('Campus Hub');
   const [selectedTimeline, setSelectedTimeline] = useState('All');
@@ -349,7 +351,7 @@ export function DiscoverView({ events, registeredEventIds, registerForEvent, def
                     currentUserId={currentUser?.id || ''}
                     onFollow={() => handleFollowOrg(org.id)}
                     onJoin={() => handleJoinOrg(org.id)}
-                    onNavigate={() => window.location.href = `/org/${org.id}`}
+                    onNavigate={() => navigate(`/org/${org.id}`)}
                   />
                 ))}
               </div>

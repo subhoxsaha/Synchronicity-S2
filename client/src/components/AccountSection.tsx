@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { 
   User as UserIcon, Mail, Calendar, ShieldCheck, LogOut, ChevronRight, ExternalLink,
   Award, Zap, LayoutDashboard, Shield, Briefcase, Users, Clock, Grid, Bookmark,
@@ -26,6 +27,7 @@ interface AccountSectionProps {
 }
 
 export function AccountSection({ user, logout, stats }: AccountSectionProps) {
+  const navigate = useNavigate();
   const { activeRole, setActiveRole, setRole, events, toggleFollow, currentUser, submitOnboarding, createOrganization, organizations, myOrganizations } = useAppContext();
   const [activeTab, setActiveTab] = useState<'posts' | 'saved' | 'settings'>('posts');
   const [isApplyOpen, setIsApplyOpen] = useState(false);
@@ -296,7 +298,7 @@ export function AccountSection({ user, logout, stats }: AccountSectionProps) {
                   <OrgInfoCell label="Policy" value={org.joinPolicy === 'open' ? 'Open' : org.joinPolicy === 'approval_required' ? 'Approval' : 'Invite'} icon={<ShieldCheck className="h-3.5 w-3.5" />} />
                 </div>
                 <div className="p-3 bg-muted/30 flex justify-end gap-2">
-                  <Button variant="outline" size="sm" className="h-8 text-[9px] font-black uppercase tracking-widest border-[2px] border-foreground bg-card hover:bg-muted" onClick={() => window.location.href = `/org/${org.id}`}>
+                  <Button variant="outline" size="sm" className="h-8 text-[9px] font-black uppercase tracking-widest border-[2px] border-foreground bg-card hover:bg-muted" onClick={() => navigate(`/org/${org.id}`)}>
                     View Profile
                   </Button>
                   {canManage && (

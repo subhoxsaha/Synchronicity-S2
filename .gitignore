@@ -21,9 +21,17 @@ server/
 # AI & Local Artifacts
 .agents/
 skills-lock.json
-analysis_results.md
-security_spec.md
-firebase-blueprint.json
+*.md
+!README.md
+!CHANGELOG.md
+*.json.bak
+
+# OS & IDE Files
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
 
 # misc
 .DS_Store
