@@ -1,0 +1,17 @@
+{
+  "firestore": {
+    "database": "ai-studio-e6b83807-c0b7-4ed0-8efe-a0c0fae4835e",
+    "location": "asia-south1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "auth": {
+    "providers": {
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Campus Hub",
+        "supportEmail": "subhoxsaha@gmail.com"
+      }
+    }
+  }
+}

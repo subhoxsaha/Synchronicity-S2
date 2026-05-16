@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, CheckCircle2, Ticket, Sparkles, Trash2, X } from 'lucide-react';
+import { Bell, CheckCircle2, Ticket, Sparkles, Trash2 } from 'lucide-react';
 import { useAppContext } from '../contexts/AppContext';
 import { NotificationType } from '../types';
 import { Button } from '@/components/ui/button';
@@ -25,102 +25,103 @@ export function NotificationBell() {
 
   return (
     <Popover>
-      <PopoverTrigger className="relative flex h-10 w-10 items-center justify-center rounded-full bg-accent/50 transition-all hover:bg-accent active:scale-95 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/20">
-        <Bell className="h-5 w-5" />
+      <PopoverTrigger className="relative flex h-9 w-9 items-center justify-center border-[2px] border-background bg-background/10 transition-all hover:bg-background/20 active:translate-y-[2px] cursor-pointer outline-none">
+        <Bell className="h-4 w-4 text-background" />
         <AnimatePresence>
           {unreadCount > 0 && (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-black text-white ring-2 ring-background"
+              className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center bg-destructive text-[9px] font-black text-white border-[2px] border-background"
             >
               {unreadCount}
             </motion.div>
           )}
         </AnimatePresence>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0 rounded-[2rem] border-none shadow-2xl overflow-hidden" align="end" sideOffset={8}>
-        <div className="bg-background">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-            <h3 className="font-heading font-black text-sm uppercase tracking-widest">Inbox</h3>
-            {notifications.length > 0 && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={clearNotifications}
-                className="h-8 px-2 text-[10px] font-bold text-muted-foreground hover:text-destructive transition-colors"
-              >
-                <Trash2 className="h-3 w-3 mr-1" />
-                Clear All
-              </Button>
-            )}
-          </div>
-          
-          <ScrollArea className="h-80">
-            {notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full p-8 text-center space-y-3">
-                <div className="h-12 w-12 rounded-full bg-accent/50 flex items-center justify-center">
-                  <Bell className="h-6 w-6 text-muted-foreground/40" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold">All caught up!</p>
-                  <p className="text-xs text-muted-foreground">Check back later for new event updates.</p>
-                </div>
-              </div>
-            ) : (
-              <div className="divide-y divide-border/50">
-                {notifications.map((notif) => (
-                  <motion.div
-                    key={notif.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className={`relative p-5 transition-colors cursor-pointer group ${
-                      !notif.read ? 'bg-primary/5' : 'hover:bg-accent/30'
-                    }`}
-                    onClick={() => markNotificationAsRead(notif.id)}
-                  >
-                    <div className="flex gap-4">
-                      <div className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${
-                        notif.type === NotificationType.UPCOMING_EVENT ? 'bg-secondary/10' : 'bg-primary/10'
-                      }`}>
-                        {getIcon(notif.type)}
-                      </div>
-                      <div className="space-y-1 grow">
-                        <div className="flex items-center justify-between">
-                          <p className={`text-xs font-black uppercase tracking-tight ${
-                            !notif.read ? 'text-foreground' : 'text-muted-foreground'
-                          }`}>
-                            {notif.title}
-                          </p>
-                          <span className="text-[10px] font-medium text-muted-foreground">
-                            {new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </div>
-                        <p className={`text-xs leading-relaxed ${
-                          !notif.read ? 'text-foreground/80 font-medium' : 'text-muted-foreground font-normal'
-                        }`}>
-                          {notif.message}
-                        </p>
-                      </div>
-                    </div>
-                    {!notif.read && (
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-primary" />
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </ScrollArea>
-          
+      <PopoverContent className="w-80 p-0 border-[2.5px] border-foreground shadow-[6px_6px_0_0_var(--foreground)] bg-card" align="end" sideOffset={8}>
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3 border-b-[2.5px] border-foreground bg-foreground text-background">
+          <h3 className="font-black text-xs uppercase tracking-[0.2em]">Inbox</h3>
           {notifications.length > 0 && (
-            <div className="p-4 border-t border-border bg-accent/10">
-              <Button size="sm" variant="ghost" className="w-full text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-                View All Activity
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearNotifications}
+              className="h-7 px-2 text-[9px] font-black text-background/60 hover:text-destructive hover:bg-transparent transition-colors uppercase tracking-widest"
+            >
+              <Trash2 className="h-3 w-3 mr-1" />
+              Clear
+            </Button>
           )}
         </div>
+
+        {/* Body */}
+        <ScrollArea className="h-72">
+          {notifications.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full p-8 text-center space-y-3">
+              <div className="h-14 w-14 border-[2.5px] border-foreground/20 flex items-center justify-center">
+                <Bell className="h-6 w-6 text-muted-foreground/30" />
+              </div>
+              <div>
+                <p className="text-sm font-black uppercase">All caught up</p>
+                <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider mt-1">No new notifications</p>
+              </div>
+            </div>
+          ) : (
+            <div className="divide-y-[2px] divide-foreground/10">
+              {notifications.map((notif) => (
+                <motion.div
+                  key={notif.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className={`relative p-4 transition-colors cursor-pointer group ${
+                    !notif.read ? 'bg-primary/5' : 'hover:bg-accent/30'
+                  }`}
+                  onClick={() => markNotificationAsRead(notif.id)}
+                >
+                  <div className="flex gap-3">
+                    <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center border-[2px] border-foreground/20 ${
+                      notif.type === NotificationType.UPCOMING_EVENT ? 'bg-secondary/10' : 'bg-primary/10'
+                    }`}>
+                      {getIcon(notif.type)}
+                    </div>
+                    <div className="space-y-0.5 grow min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className={`text-[10px] font-black uppercase tracking-tight truncate ${
+                          !notif.read ? 'text-foreground' : 'text-muted-foreground'
+                        }`}>
+                          {notif.title}
+                        </p>
+                        <span className="text-[9px] font-mono text-muted-foreground shrink-0">
+                          {new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <p className={`text-[11px] leading-relaxed line-clamp-2 ${
+                        !notif.read ? 'text-foreground/80 font-medium' : 'text-muted-foreground'
+                      }`}>
+                        {notif.message}
+                      </p>
+                    </div>
+                  </div>
+                  {!notif.read && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 h-2 w-2 bg-primary" />
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </ScrollArea>
+
+        {/* Footer */}
+        {notifications.length > 0 && (
+          <div className="p-3 border-t-[2.5px] border-foreground/10 bg-muted/30">
+            <Button size="sm" variant="ghost" className="w-full text-[9px] font-black uppercase tracking-[0.2em] text-primary hover:bg-primary/10 active:translate-y-[2px] transition-transform">
+              View All Activity
+            </Button>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );

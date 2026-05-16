@@ -11,7 +11,27 @@ coverage
 out/
 
 # production
-build
+build/
+dist/
+client/dist/
+
+# Sub-repositories
+server/
+
+# AI & Local Artifacts
+.agents/
+skills-lock.json
+*.md
+!README.md
+!CHANGELOG.md
+*.json.bak
+
+# OS & IDE Files
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
 
 # misc
 .DS_Store

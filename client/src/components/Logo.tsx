@@ -34,12 +34,12 @@ export function Logo({ className = "h-8", showText = true }: LogoProps) {
         </svg>
       </div>
       {showText && (
-        <div className="flex flex-col -space-y-1">
+        <div className="flex flex-col -space-y-1 text-left">
           <span className="font-heading text-xl font-black tracking-tighter text-foreground uppercase">
-            CAMPUS<span className="text-primary italic">PULSE</span>
+            PRISMA<span className="text-primary italic">PULSE</span>
           </span>
           <span className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-60">
-            Real-time Hub
+            Chromatic Hub
           </span>
         </div>
       )}

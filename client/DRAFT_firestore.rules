@@ -1,0 +1,122 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function getUserData(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data;
+    }
+
+    function hasRole(role) {
+      return isSignedIn() && getUserData(request.auth.uid).role == role;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // --- Validation Blueprints ---
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['id', 'name', 'email', 'role']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.email is string && data.email.size() <= 100 &&
+             data.role in ['student', 'organizer', 'admin'];
+    }
+
+    function isValidEvent(data) {
+      return data.keys().hasAll(['id', 'title', 'organizerEmail', 'organizerName', 'date', 'location', 'capacity']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.organizerEmail is string && data.organizerEmail.size() <= 100 &&
+             data.date is string && // Should be ISO date-time
+             data.location is string && data.location.size() <= 300 &&
+             data.capacity is int && data.capacity > 0;
+    }
+
+    function isValidRegistration(data) {
+      return data.keys().hasAll(['id', 'eventId', 'userEmail', 'timestamp', 'checkedIn', 'qrCode']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.eventId is string && data.eventId.size() <= 128 &&
+             data.userEmail is string && data.userEmail.size() <= 100 &&
+             data.checkedIn is bool &&
+             data.qrCode is string;
+    }
+
+    function isValidNotification(data) {
+      return data.keys().hasAll(['id', 'userId', 'type', 'title', 'message', 'timestamp', 'read']) &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.read is bool;
+    }
+
+    // --- Collections ---
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && (isOwner(userId) || hasRole('admin'));
+      allow list: if hasRole('admin');
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data) &&
+                      request.resource.data.role == resource.data.role; // Role is immutable for user
+    }
+
+    match /events/{eventId} {
+      allow read: if isSignedIn(); // Events are public to signed-in users
+      allow create: if (hasRole('organizer') || hasRole('admin')) && 
+                       isValidEvent(request.resource.data) &&
+                       isValidId(eventId) &&
+                       request.resource.data.organizerEmail == request.auth.token.email;
+      allow update: if (hasRole('organizer') || hasRole('admin')) &&
+                       isValidEvent(request.resource.data) &&
+                       resource.data.organizerEmail == request.auth.token.email &&
+                       request.resource.data.organizerEmail == resource.data.organizerEmail; // Organizer cannot change
+    }
+
+    match /registrations/{registrationId} {
+      allow read: if isSignedIn() && (
+        resource.data.userEmail == request.auth.token.email ||
+        getUserData(request.auth.uid).role in ['organizer', 'admin']
+      );
+      allow create: if isSignedIn() &&
+                       isValidRegistration(request.resource.data) &&
+                       isValidId(registrationId) &&
+                       request.resource.data.userEmail == request.auth.token.email &&
+                       existsAfter(/databases/$(database)/documents/events/$(request.resource.data.eventId));
+      allow update: if isSignedIn() &&
+                       isValidRegistration(request.resource.data) &&
+                       (
+                         // Students can check in their own? No, only organizer/admin should check in students
+                         // But for now, let's allow organizer/admin to check in
+                         (getUserData(request.auth.uid).role in ['organizer', 'admin']) &&
+                         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['checkedIn']) &&
+                         resource.data.checkedIn == false &&
+                         existsAfter(/databases/$(database)/documents/events/$(resource.data.eventId))
+                       );
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if false; // System only
+      allow update: if isSignedIn() && 
+                       resource.data.userId == request.auth.uid &&
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

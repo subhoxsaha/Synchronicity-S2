@@ -1,0 +1,283 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && (
+        isPlatformAdmin() || 
+        request.auth.token.email_verified == true
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Platform admin check  
+    function isPlatformAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'subhoxsaha@gmail.com' ||
+        request.auth.token.email == 'ashimasaha87759@gmail.com' ||
+        request.auth.token.email == 'subhrajit.saha.work@gmail.com' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'platform_admin'
+      );
+    }
+
+    // Ambassador check
+    function isAmbassador(instituteId) {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'ambassador' &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('instituteId', '') == instituteId;
+    }
+
+    function isOrganizer() {
+      return isEmailVerified() && (
+        isPlatformAdmin() || 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'student') == 'organizer'
+      );
+    }
+
+    function isApprovedOrganizer() {
+      return isOrganizer() && (
+        isPlatformAdmin() ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('isApproved', false) == true
+      );
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isImmutable(field) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny([field]);
+    }
+
+    // --- Validation Blueprints ---
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['id', 'name', 'email', 'role']) &&
+             data.id is string && data.name is string && data.email is string &&
+             data.get('followers', []) is list && data.get('following', []) is list &&
+             data.get('isApproved', false) is bool &&
+             data.get('onboardingComplete', false) is bool &&
+             data.get('orgName', '') is string &&
+             data.get('orgDescription', '') is string &&
+             data.get('orgWebsite', '') is string &&
+             data.get('orgType', '') is string;
+    }
+
+    function isValidEvent(data) {
+      return data.keys().hasAll(['id', 'title', 'organizerEmail', 'organizerName', 'organizerId', 'date', 'location', 'capacity', 'assets', 'coordinates', 'category']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.organizerEmail is string && data.organizerEmail.size() <= 100 &&
+             data.organizerId is string &&
+             data.date is string && 
+             data.location is string && data.location.size() <= 300 &&
+             data.capacity is int && data.capacity > 0 &&
+             data.assets is map &&
+             data.coordinates is map &&
+             data.get('posterConfig', {}) is map &&
+             data.get('likes', []) is list &&
+             data.get('tags', []) is list &&
+             data.get('imageUrl', '') is string &&
+             data.get('status', 'pending') is string &&
+             data.get('registeredCount', 0) is int &&
+             data.get('checkedInCount', 0) is int &&
+             data.category is list;
+    }
+
+    function isValidComment(data) {
+      return data.keys().hasAll(['id', 'eventId', 'userId', 'userName', 'userAvatar', 'text', 'createdAt']) &&
+             data.id is string && data.eventId is string && data.userId is string &&
+             data.text is string && data.text.size() <= 1000;
+    }
+
+    function isValidRegistration(data) {
+      return data.keys().hasAll(['id', 'eventId', 'userEmail', 'userName', 'organizerEmail', 'timestamp', 'checkedIn', 'qrCode']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.eventId is string && data.eventId.size() <= 128 &&
+             data.userEmail is string && data.userEmail.size() <= 100 &&
+             data.userName is string && data.userName.size() <= 100 &&
+             data.organizerEmail is string && data.organizerEmail.size() <= 100 &&
+             data.checkedIn is bool &&
+             data.qrCode is string;
+    }
+
+    function isValidNotification(data) {
+      return data.keys().hasAll(['id', 'userId', 'type', 'title', 'message', 'timestamp', 'read']) &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.read is bool;
+    }
+
+    // --- Collections ---
+    
+    match /test/connection {
+      allow read: if true;
+    }
+
+    match /users/{userId} {
+      // allow read if signed in (social discovery)
+      allow get, list: if isSignedIn();
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isPlatformAdmin() || (
+        isValidUser(incoming()) && (
+          // Action: Profile Update (Owner only)
+          (isOwner(userId) && isImmutable('id') && isImmutable('email') && isImmutable('role')) ||
+          // Action: Follow (Any signed in user can add/remove themselves from another user's followers list)
+          (isSignedIn() && 
+           incoming().diff(existing()).affectedKeys().hasOnly(['followers']) &&
+           (
+             // Adding themselves
+             (incoming().followers.hasAll(existing().get('followers', [])) && 
+              incoming().followers.size() == existing().get('followers', []).size() + 1 &&
+              incoming().followers.hasAll([request.auth.uid])) ||
+             // Removing themselves
+             (existing().get('followers', []).hasAll(incoming().followers) && 
+              incoming().followers.size() == existing().get('followers', []).size() - 1 &&
+              !incoming().followers.hasAll([request.auth.uid]))
+           ))
+        )
+      );
+    }
+
+    match /events/{eventId} {
+      allow read: if true;
+      allow create: if isApprovedOrganizer() && 
+                       isValidEvent(incoming()) &&
+                       isValidId(eventId) &&
+                       incoming().organizerId == request.auth.uid &&
+                       incoming().organizerEmail == request.auth.token.email;
+      allow update: if isPlatformAdmin() || (
+        // Action: Organizer Details Update
+        (isApprovedOrganizer() && isValidEvent(incoming()) && 
+         existing().organizerId == request.auth.uid &&
+         isImmutable('organizerId') && isImmutable('organizerEmail') && isImmutable('id'))
+      ) || (
+        // Action: Participant Registration counter
+        (isEmailVerified() && 
+         incoming().diff(existing()).affectedKeys().hasOnly(['registeredCount']) &&
+         incoming().registeredCount == existing().registeredCount + 1 &&
+         existsAfter(/databases/$(database)/documents/registrations/$(request.auth.uid + "_" + eventId)))
+      ) || (
+        // Action: Social Interaction (Like)
+        (isEmailVerified() && 
+         incoming().diff(existing()).affectedKeys().hasOnly(['likes']) &&
+         (
+           // Adding like
+           (incoming().likes.hasAll(existing().get('likes', [])) && 
+            incoming().likes.size() == existing().get('likes', []).size() + 1 &&
+            incoming().likes.hasAll([request.auth.uid])) ||
+           // Removing like
+           (existing().get('likes', []).hasAll(incoming().likes) && 
+            incoming().likes.size() == existing().get('likes', []).size() - 1 &&
+            !incoming().likes.hasAll([request.auth.uid]))
+         ))
+      ) || (
+        // Action: Comment counter
+        (isEmailVerified() &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['commentCount']) &&
+         incoming().commentCount == existing().get('commentCount', 0) + 1)
+      ) || (
+        // Action: Organizer Check-in counter
+        (isOrganizer() && 
+         existing().organizerId == request.auth.uid &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['checkedInCount']) &&
+         incoming().checkedInCount == (existing().get('checkedInCount', 0) + 1))
+      );
+      allow delete: if isPlatformAdmin() || (isOrganizer() && existing().organizerId == request.auth.uid);
+    }
+
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if isSignedIn() && 
+                       isValidComment(incoming()) &&
+                       incoming().userId == request.auth.uid &&
+                       existsAfter(/databases/$(database)/documents/events/$(incoming().eventId));
+      allow delete: if isPlatformAdmin() || (isSignedIn() && existing().userId == request.auth.uid);
+    }
+
+    match /registrations/{registrationId} {
+      allow get: if isSignedIn() && (
+        existing().userEmail == request.auth.token.email ||
+        existing().organizerEmail == request.auth.token.email ||
+        isPlatformAdmin()
+      );
+      allow list: if isSignedIn() && (
+        isPlatformAdmin() ||
+        resource.data.userEmail == request.auth.token.email ||
+        resource.data.organizerEmail == request.auth.token.email
+      );
+      allow create: if isSignedIn() &&
+                       isValidRegistration(incoming()) &&
+                       isValidId(registrationId) &&
+                       incoming().userEmail == request.auth.token.email &&
+                       incoming().checkedIn == false &&
+                       existsAfter(/databases/$(database)/documents/events/$(incoming().eventId));
+      allow update: if (isPlatformAdmin()) || (
+        isEmailVerified() &&
+        isValidRegistration(incoming()) && 
+        isImmutable('id') && isImmutable('eventId') && isImmutable('userEmail') &&
+        (
+          // Action: Check-in (Only Organizer can flip checkedIn from false to true)
+          (existing().organizerEmail == request.auth.token.email &&
+           incoming().diff(existing()).affectedKeys().hasOnly(['checkedIn']) &&
+           existing().checkedIn == false &&
+           incoming().checkedIn == true &&
+           existsAfter(/databases/$(database)/documents/events/$(existing().eventId)))
+        )
+      );
+      allow delete: if isPlatformAdmin() || (isSignedIn() && existing().userEmail == request.auth.token.email);
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn() && existing().userId == request.auth.uid;
+      allow create: if false; // System only
+      allow update: if isSignedIn() && 
+                       existing().userId == request.auth.uid &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['read']);
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+
+    match /institutes/{instituteId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin();
+    }
+
+    match /organizations/{orgId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    match /instituteRequests/{requestId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() &&
+                       incoming().requesterId == request.auth.uid &&
+                       incoming().status == 'pending';
+      allow update: if isPlatformAdmin();
+      allow delete: if isPlatformAdmin();
+    }
+  }
+}

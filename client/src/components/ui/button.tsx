@@ -1,23 +1,25 @@
-import { Button as ButtonPrimitive } from "@base-ui/react/button"
+import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-xl border border-transparent bg-clip-padding text-sm font-bold whitespace-nowrap transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-primary/20 active:scale-95 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center border-[2.5px] border-foreground bg-clip-padding text-sm font-bold whitespace-nowrap outline-none select-none transition-[transform,box-shadow] duration-100 ease-out hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0_0_var(--border)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-ring/30 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90",
+        default: "bg-primary text-primary-foreground shadow-[4px_4px_0_0_var(--border)]",
         outline:
-          "border-border bg-background hover:bg-accent/50 hover:text-foreground",
+          "bg-background text-foreground shadow-[4px_4px_0_0_var(--border)]",
         secondary:
-          "bg-secondary text-white hover:bg-secondary/90 shadow-lg shadow-secondary/10",
+          "bg-secondary text-secondary-foreground shadow-[4px_4px_0_0_var(--border)]",
         ghost:
-          "hover:bg-accent/50 hover:text-foreground",
+          "border-transparent shadow-none hover:border-foreground hover:shadow-[4px_4px_0_0_var(--border)] hover:translate-x-0 hover:translate-y-0 active:translate-x-[2px] active:translate-y-[2px]",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-destructive text-destructive-foreground shadow-[4px_4px_0_0_var(--border)]",
+        link: "border-transparent text-primary underline-offset-4 hover:underline shadow-none hover:translate-x-0 hover:translate-y-0 hover:shadow-none",
+        accent:
+          "bg-accent text-accent-foreground shadow-[4px_4px_0_0_var(--border)]",
       },
       size: {
         default: "h-11 px-6",
@@ -42,9 +44,9 @@ function Button({
   variant = "default",
   size = "default",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: React.ComponentProps<"button"> & VariantProps<typeof buttonVariants>) {
   return (
-    <ButtonPrimitive
+    <button
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
